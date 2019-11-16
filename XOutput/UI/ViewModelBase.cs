@@ -12,5 +12,10 @@ namespace XOutput.UI
         {
             this.model = model;
         }
+
+        public virtual void CleanUp()
+        {
+            Model.CleanUp();
+        }
     }
 }

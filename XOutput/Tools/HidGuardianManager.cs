@@ -11,6 +11,7 @@ namespace XOutput.Tools
 
         private RegistryModifier registryModifier;
 
+        [ResolverMethod]
         public HidGuardianManager(RegistryModifier registryModifier)
         {
             this.registryModifier = registryModifier;

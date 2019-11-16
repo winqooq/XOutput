@@ -7,14 +7,18 @@
         /// </summary>
         public bool ForceFeedback { get; set; }
 
+        public string Id { get; set; }
+
         public InputConfig()
         {
+            Id = "";
             ForceFeedback = false;
         }
 
-        public InputConfig(int forceFeedbackCount)
+        public InputConfig(string id)
         {
-            ForceFeedback = forceFeedbackCount > 0;
+            Id = id;
+            ForceFeedback = false;
         }
     }
 }

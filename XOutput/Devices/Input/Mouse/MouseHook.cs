@@ -22,11 +22,14 @@ namespace XOutput.Devices.Input.Mouse
             {
                 if (nCode >= 0)
                 {
-                    var args = MouseHookEventArgs.Create((MouseMessage)wParam, lParam);
-                    if (args != null)
+                    Task.Run(() =>
                     {
-                        MouseEvent?.Invoke(args);
-                    }
+                        var args = MouseHookEventArgs.Create((MouseMessage)wParam, lParam);
+                        if (args != null)
+                        {
+                            MouseEvent?.Invoke(args);
+                        }
+                    });
                 }
                 return NativeMethods.CallNextHookEx(hookPtr, nCode, wParam, lParam);
             };

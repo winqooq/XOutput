@@ -33,7 +33,24 @@ namespace XOutput.Devices.Mapper
 
         public InputMapper()
         {
+            Id = "";
+            Name = "Controller";
             Mappings = new Dictionary<XInputTypes, MapperDataCollection>();
+            foreach (var type in XInputHelper.Instance.Values)
+            {
+                SetMapping(type, new MapperDataCollection(new MapperData()));
+            }
+        }
+
+        public InputMapper(string id)
+        {
+            Id = id;
+            Name = "Controller";
+            Mappings = new Dictionary<XInputTypes, MapperDataCollection>();
+            foreach (var type in XInputHelper.Instance.Values)
+            {
+                SetMapping(type, new MapperDataCollection(new MapperData()));
+            }
         }
 
         public ISet<IInputDevice> GetInputs()

@@ -16,33 +16,51 @@ using XOutput.Diagnostics;
 using XOutput.Logging;
 using XOutput.Tools;
 using XOutput.UI.Component;
-using XOutput.UpdateChecker;
+using XOutput.Versioning;
 
 namespace XOutput.UI.Windows
 {
     public class MainWindowViewModel : ViewModelBase<MainWindowModel>, IDisposable
     {
+
         private readonly int pid = Process.GetCurrentProcess().Id;
         private const string SettingsFilePath = "settings.json";
         private const string GameControllersSettings = "joy.cpl";
 
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(MainWindowViewModel));
+
+        private readonly LanguageManager languageManager;
         private readonly HidGuardianManager hidGuardianManager;
+        private readonly SettingsManager settingsManager;
         private readonly Dispatcher dispatcher;
+        private readonly UpdateChecker updateChecker;
 
         private readonly DispatcherTimer timer = new DispatcherTimer();
         private readonly DirectInputDevices directInputDevices = new DirectInputDevices();
         private Action<string> log;
-        private Settings settings;
+        private GeneralSettings settings;
         private bool installed;
+        private bool isAdmin;
 
-        public MainWindowViewModel(MainWindowModel model, Dispatcher dispatcher, HidGuardianManager hidGuardianManager) : base(model)
+        [ResolverMethod(Scope.Prototype)]
+        public MainWindowViewModel(MainWindowModel model, Dispatcher dispatcher, SettingsManager settingsManager,
+            UpdateChecker updateChecker, LanguageManager languageManager, HidGuardianManager hidGuardianManager) : base(model)
         {
-            this.dispatcher = dispatcher;
+            this.languageManager = languageManager;
             this.hidGuardianManager = hidGuardianManager;
+            this.settingsManager = settingsManager;
+            this.dispatcher = dispatcher;
+            this.updateChecker = updateChecker;
+
             timer.Interval = TimeSpan.FromMilliseconds(10000);
             timer.Tick += (object sender1, EventArgs e1) => { RefreshGameControllers(); };
             timer.Start();
+        }
+
+        public override void CleanUp()
+        {
+            timer.Stop();
+            base.CleanUp();
         }
 
         public void Dispose()
@@ -55,35 +73,15 @@ namespace XOutput.UI.Windows
             {
                 controller.Dispose();
             }
-            timer.Stop();
             directInputDevices.Dispose();
-        }
-
-        public void LoadSettings(string settingsFilePath)
-        {
-            try
-            {
-                settings = Settings.Load(settingsFilePath);
-            }
-            catch
-            {
-                settings = new Settings();
-                throw;
-            }
-        }
-
-        public Settings GetSettings()
-        {
-            return settings;
         }
 
         public void Initialize(Action<string> log)
         {
             this.log = log;
-            LanguageManager languageManager = LanguageManager.Instance;
             try
             {
-                LoadSettings(SettingsFilePath);
+                settings = settingsManager.LoadGeneralSettings();
                 languageManager.Language = settings.Language;
                 logger.Info("Loading settings was successful.");
                 log(string.Format(Translate("LoadSettingsSuccess"), SettingsFilePath));
@@ -100,13 +98,13 @@ namespace XOutput.UI.Windows
                 try
                 {
                     hidGuardianManager.ResetPid(pid);
-                    Model.IsAdmin = true;
+                    isAdmin = true;
                     logger.Info("HidGuardian registry is set");
                     log(string.Format(Translate("HidGuardianEnabledSuccessfully"), pid.ToString()));
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    Model.IsAdmin = false;
+                    isAdmin = false;
                     logger.Warning("Not running in elevated mode.");
                     log(Translate("HidGuardianNotAdmin"));
                 }
@@ -144,77 +142,63 @@ namespace XOutput.UI.Windows
                     MessageBox.Show(error, Translate("Error"));
                 }
             }
-            Model.Settings = settings;
             RefreshGameControllers();
 
             logger.Debug("Creating keyboard controller");
             Devices.Input.Keyboard.Keyboard keyboard = new Devices.Input.Keyboard.Keyboard();
-            settings.GetOrCreateInputConfiguration(keyboard.ToString(), keyboard.InputConfiguration);
             InputDevices.Instance.Add(keyboard);
             Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), keyboard, false)));
             logger.Debug("Creating mouse controller");
             Devices.Input.Mouse.Mouse mouse = new Devices.Input.Mouse.Mouse();
-            settings.GetOrCreateInputConfiguration(mouse.ToString(), mouse.InputConfiguration);
             InputDevices.Instance.Add(mouse);
             Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), mouse, false)));
-            foreach (var mapping in settings.Mapping)
+            foreach (var mappingId in settingsManager.ListMappingSettingsIds())
             {
+                var mapping = settingsManager.LoadMappingConfig(mappingId);
                 AddController(mapping);
             }
             log(string.Format(LanguageModel.Instance.Translate("ControllerConnected"), LanguageModel.Instance.Translate("Keyboard")));
             logger.Info("Keyboard controller is connected");
         }
 
-        public void SaveSettings()
+        internal GeneralSettings GetSettings()
         {
-            try
-            {
-                settings.Save(SettingsFilePath);
-                logger.Info("Saving settings was successful.");
-                log(string.Format(Translate("SaveSettingsSuccess"), SettingsFilePath));
-            }
-            catch (Exception ex)
-            {
-                logger.Warning("Saving settings was unsuccessful.");
-                logger.Warning(ex);
-                string error = string.Format(Translate("SaveSettingsError"), SettingsFilePath) + Environment.NewLine + ex.Message;
-                log(error);
-                MessageBox.Show(error, Translate("Warning"));
-            }
+            return settings;
         }
 
         public void AboutPopupShow()
         {
-            MessageBox.Show(Translate("AboutContent") + Environment.NewLine + string.Format(Translate("Version"), UpdateChecker.Version.AppVersion), Translate("AboutMenu"));
+            MessageBox.Show(Translate("AboutContent") + Environment.NewLine + string.Format(Translate("Version"), Versioning.Version.AppVersion), Translate("AboutMenu"));
         }
 
-        public void VersionCompare(VersionCompare compare)
+        public async Task CompareVersion()
         {
-            switch (compare)
+            var result = await new UpdateChecker().CompareRelease();
+            switch (result)
             {
-                case UpdateChecker.VersionCompare.Error:
+                case VersionCompare.Error:
                     logger.Warning("Failed to check latest version");
                     log(Translate("VersionCheckError"));
                     break;
-                case UpdateChecker.VersionCompare.NeedsUpgrade:
+                case VersionCompare.NeedsUpgrade:
                     logger.Info("New version is available");
                     log(Translate("VersionCheckNeedsUpgrade"));
                     break;
-                case UpdateChecker.VersionCompare.NewRelease:
+                case VersionCompare.NewRelease:
                     log(Translate("VersionCheckNewRelease"));
                     break;
-                case UpdateChecker.VersionCompare.UpToDate:
+                case VersionCompare.UpToDate:
                     logger.Info("Version is up-to-date");
                     log(Translate("VersionCheckUpToDate"));
                     break;
                 default:
-                    throw new ArgumentException(nameof(compare));
+                    throw new ArgumentException(nameof(result));
             }
         }
 
         public void RefreshGameControllers()
         {
-            IEnumerable<SharpDX.DirectInput.DeviceInstance> instances = directInputDevices.GetInputDevices(Model.AllDevices);
+            IEnumerable<SharpDX.DirectInput.DeviceInstance> instances = directInputDevices.GetInputDevices(settings.ShowAllDevices);
 
             foreach (var inputView in Model.Inputs.ToArray())
             {
@@ -236,20 +220,19 @@ namespace XOutput.UI.Windows
                     {
                         continue;
                     }
-                    InputConfig inputConfig = settings.GetOrCreateInputConfiguration(device.ToString(), device.InputConfiguration);
                     device.Disconnected -= DispatchRefreshGameControllers;
                     device.Disconnected += DispatchRefreshGameControllers;
-                    Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), device, Model.IsAdmin)));
+                    Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), device, isAdmin)));
                 }
             }
         }
 
         public void AddController(InputMapper mapper)
         {
-            var gameController = new GameController(mapper ?? settings.CreateMapper(Guid.NewGuid().ToString()));
+            var gameController = new GameController(mapper ?? new InputMapper(Guid.NewGuid().ToString()));
             Controllers.Instance.Add(gameController);
 
-            var controllerView = new ControllerView(new ControllerViewModel(new ControllerModel(), gameController, Model.IsAdmin, log));
+            var controllerView = new ControllerView(new ControllerViewModel(new ControllerModel(), gameController, isAdmin, log));
             controllerView.ViewModel.Model.CanStart = installed;
             controllerView.RemoveClicked += RemoveController;
             Model.Controllers.Add(controllerView);
@@ -270,7 +253,7 @@ namespace XOutput.UI.Windows
             logger.Info($"{controller.ToString()} is disconnected.");
             log(string.Format(LanguageModel.Instance.Translate("ControllerDisconnected"), controller.DisplayName));
             Controllers.Instance.Remove(controller);
-            settings.Mapping.RemoveAll(m => m.Id == controller.Mapper.Id);
+            settingsManager.DeleteMappingSettings(controller.Mapper);
         }
 
         public void OpenWindowsGameControllerSettings()
@@ -291,9 +274,8 @@ namespace XOutput.UI.Windows
 
         public void OpenSettings()
         {
-            ApplicationContext context = ApplicationContext.Global.WithSingletons(settings);
-            SettingsWindow settingsWindow = context.Resolve<SettingsWindow>();
-            settingsWindow.ShowDialog();
+            SettingsWindow settingsWindow = ApplicationContext.Global.Resolve<SettingsWindow>();
+            SettingsResult result = settingsWindow.ShowAndWaitResult();
         }
 
         public void OpenDiagnostics()

@@ -18,6 +18,7 @@ namespace XOutput
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(App));
 
         private MainWindowViewModel mainWindowViewModel;
+        private MainWindow mainWindow;
         private SingleInstanceProvider singleInstanceProvider;
         private ArgumentParser argumentParser;
 
@@ -58,7 +59,7 @@ namespace XOutput
             {
                 singleInstanceProvider.StartNamedPipe();
                 try {
-                    var mainWindow = ApplicationContext.Global.Resolve<MainWindow>();
+                    mainWindow = ApplicationContext.Global.Resolve<MainWindow>();
                     mainWindowViewModel = mainWindow.ViewModel;
                     MainWindow = mainWindow;
                     singleInstanceProvider.ShowEvent += mainWindow.ForceShow;
@@ -82,6 +83,7 @@ namespace XOutput
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
+            mainWindow.CleanUp();
             mainWindowViewModel?.Dispose();
             singleInstanceProvider.StopNamedPipe();
             singleInstanceProvider.Close();

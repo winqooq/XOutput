@@ -19,11 +19,6 @@ namespace XOutput.Tools
         private readonly Dictionary<string, Dictionary<string, string>> data = new Dictionary<string, Dictionary<string, string>>();
 
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(LanguageManager));
-        private static LanguageManager instance = new LanguageManager();
-        /// <summary>
-        /// Gets the singleton instance of the class.
-        /// </summary>
-        public static LanguageManager Instance => instance;
 
         private string language;
         /// <summary>
@@ -48,7 +43,8 @@ namespace XOutput.Tools
             }
         }
 
-        private LanguageManager()
+        [ResolverMethod]
+        public LanguageManager()
         {
             var assembly = Assembly.GetExecutingAssembly();
             var serializer = new JsonSerializer();

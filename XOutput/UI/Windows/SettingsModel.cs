@@ -5,74 +5,61 @@ namespace XOutput.UI.Windows
 {
     public class SettingsModel : ModelBase
     {
-        private readonly Settings settings;
-        private readonly RegistryModifier registryModifier;
-
         private readonly ObservableCollection<string> languages = new ObservableCollection<string>();
         public ObservableCollection<string> Languages => languages;
 
         private string selectedLanguage;
         public string SelectedLanguage
         {
-            get
-            {
-                selectedLanguage = LanguageManager.Instance.Language;
-                return selectedLanguage;
-            }
-            set
-            {
-                if (selectedLanguage != value)
-                {
-                    selectedLanguage = value;
-                    LanguageManager.Instance.Language = value;
-                    OnPropertyChanged(nameof(SelectedLanguage));
-                }
-            }
+            get => selectedLanguage;
+            set { Set(value, selectedLanguage, (v) => selectedLanguage = v, nameof(SelectedLanguage)); }
         }
 
+        private bool closeToTray;
         public bool CloseToTray
         {
-            get => settings.CloseToTray;
-            set
-            {
-                if (settings.CloseToTray != value)
-                {
-                    settings.CloseToTray = value;
-                    OnPropertyChanged(nameof(CloseToTray));
-                }
-            }
+            get => closeToTray;
+            set { Set(value, closeToTray, (v) => closeToTray = v, nameof(CloseToTray)); }
         }
 
-        public bool RunAtStartup
-        {
-            get => registryModifier.Autostart;
-            set
-            {
-                if (registryModifier.Autostart != value)
-                {
-                    registryModifier.Autostart = value;
-                    OnPropertyChanged(nameof(RunAtStartup));
-                }
-            }
-        }
-
+        private bool hidGuardianEnabled;
         public bool HidGuardianEnabled
         {
-            get => settings.HidGuardianEnabled;
-            set
-            {
-                if (settings.HidGuardianEnabled != value)
-                {
-                    settings.HidGuardianEnabled = value;
-                    OnPropertyChanged(nameof(HidGuardianEnabled));
-                }
-            }
+            get => hidGuardianEnabled;
+            set { Set(value, hidGuardianEnabled, (v) => hidGuardianEnabled = v, nameof(HidGuardianEnabled)); }
         }
 
-        public SettingsModel(RegistryModifier registryModifier, Settings settings)
+        private bool showAll;
+        public bool ShowAll
         {
-            this.registryModifier = registryModifier;
-            this.settings = settings;
+            get => showAll;
+            set { Set(value, showAll, (v) => showAll = v, nameof(ShowAll)); }
+        }
+
+        private bool runAtStartup;
+        public bool RunAtStartup
+        {
+            get => runAtStartup;
+            set { Set(value, runAtStartup, (v) => runAtStartup = v, nameof(RunAtStartup)); }
+        }
+
+        private bool changed;
+        public bool Changed
+        {
+            get => changed;
+            set { Set(value, changed, (v) => changed = v, nameof(Changed)); }
+        }
+
+        [ResolverMethod(Scope.Prototype)]
+        public SettingsModel()
+        {
+
+        }
+
+        public override void CleanUp()
+        {
+            base.CleanUp();
+            Languages.Clear();
         }
     }
 }

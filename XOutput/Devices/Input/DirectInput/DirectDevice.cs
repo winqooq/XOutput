@@ -195,7 +195,7 @@ namespace XOutput.Devices.Input.DirectInput
             }
             state = new DeviceState(sources, joystick.Capabilities.PovCount);
             deviceInputChangedEventArgs = new DeviceInputChangedEventArgs(this);
-            inputConfig = new InputConfig(ForceFeedbackCount);
+            inputConfig = new InputConfig(UniqueId);
             inputRefresher = new Thread(InputRefresher)
             {
                 Name = ToString() + " input reader"

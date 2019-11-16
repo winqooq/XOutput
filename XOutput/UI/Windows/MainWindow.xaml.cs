@@ -11,18 +11,16 @@ namespace XOutput.UI.Windows
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IViewBase<MainWindowViewModel, MainWindowModel>
+    public partial class MainWindow : WindowBase<MainWindowViewModel, MainWindowModel>
     {
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(MainWindow));
-        private readonly MainWindowViewModel viewModel;
-        public MainWindowViewModel ViewModel => viewModel;
+
         private bool hardExit = false;
         private WindowState restoreState = WindowState.Normal;
 
-        public MainWindow(MainWindowViewModel viewModel, ArgumentParser argumentParser)
+        [ResolverMethod(Scope.Prototype)]
+        public MainWindow(MainWindowViewModel viewModel, ArgumentParser argumentParser) : base(viewModel)
         {
-            this.viewModel = viewModel;
-            DataContext = viewModel;
             if (argumentParser.Minimized)
             {
                 Visibility = Visibility.Hidden;
@@ -36,27 +34,23 @@ namespace XOutput.UI.Windows
             }
             new WindowInteropHelper(this).EnsureHandle();
             InitializeComponent();
+            Closed += WindowClosed;
+            Closing += WindowClosing;
             viewModel.Initialize(Log);
             Dispatcher.Invoke(Initialize);
+            logger.Info("The application has started.");
+        }
+
+        public override void CleanUp()
+        {
+            base.CleanUp();
+            Closed -= WindowClosed;
+            Closing -= WindowClosing;
         }
 
         private async Task Initialize()
         {
-            await logger.Info("The application has started.");
-            await GetData();
-        }
-
-        public async Task GetData()
-        {
-            try
-            {
-                var result = await new UpdateChecker.UpdateChecker().CompareRelease();
-                viewModel.VersionCompare(result);
-            }
-            catch (Exception)
-            {
-                // Version comparison failed
-            }
+            await ViewModel.CompareVersion();
         }
 
         public void Log(string msg)
@@ -77,12 +71,12 @@ namespace XOutput.UI.Windows
 
         private void AddControllerClick(object sender, RoutedEventArgs e)
         {
-            viewModel.AddController(null);
+            ViewModel.AddController(null);
         }
 
         private void RefreshClick(object sender, RoutedEventArgs e)
         {
-            viewModel.RefreshGameControllers();
+            ViewModel.RefreshGameControllers();
         }
         private void ExitClick(object sender, RoutedEventArgs e)
         {
@@ -100,32 +94,27 @@ namespace XOutput.UI.Windows
         }
         private void GameControllersClick(object sender, RoutedEventArgs e)
         {
-            viewModel.OpenWindowsGameControllerSettings();
-        }
-
-        private void SaveClick(object sender, RoutedEventArgs e)
-        {
-            viewModel.SaveSettings();
+            ViewModel.OpenWindowsGameControllerSettings();
         }
 
         private void SettingsClick(object sender, RoutedEventArgs e)
         {
-            viewModel.OpenSettings();
+            ViewModel.OpenSettings();
         }
 
         private void DiagnosticsClick(object sender, RoutedEventArgs e)
         {
-            viewModel.OpenDiagnostics();
+            ViewModel.OpenDiagnostics();
         }
 
         private void AboutClick(object sender, RoutedEventArgs e)
         {
-            viewModel.AboutPopupShow();
+            ViewModel.AboutPopupShow();
         }
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (viewModel.GetSettings().CloseToTray && !hardExit)
+            if (ViewModel.GetSettings().CloseToTray && !hardExit)
             {
                 e.Cancel = true;
                 restoreState = WindowState;
@@ -137,13 +126,8 @@ namespace XOutput.UI.Windows
 
         private async void WindowClosed(object sender, EventArgs e)
         {
-            viewModel.Dispose();
+            ViewModel.Dispose();
             await logger.Info("The application will exit.");
-        }
-
-        private void CheckBoxChecked(object sender, RoutedEventArgs e)
-        {
-            viewModel.RefreshGameControllers();
         }
 
         private void TaskbarIconTrayMouseDoubleClick(object sender, RoutedEventArgs e)

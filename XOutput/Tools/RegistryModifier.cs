@@ -37,13 +37,16 @@ namespace XOutput.Tools
             }
             set
             {
-                if (value)
+                if (Autostart != value)
                 {
-                    SetAutostart();
-                }
-                else
-                {
-                    ClearAutostart();
+                    if (value)
+                    {
+                        SetAutostart();
+                    }
+                    else
+                    {
+                        ClearAutostart();
+                    }
                 }
             }
         }
