@@ -5,12 +5,11 @@ namespace XOutput.UI
 {
     public abstract class WindowBase<VM, M> : MetroWindow, IViewBase<VM, M> where VM : ViewModelBase<M> where M : ModelBase
     {
-        private VM viewModel;
-        public VM ViewModel => viewModel;
+        public VM ViewModel { get; private set; }
 
         protected WindowBase(VM viewModel)
         {
-            this.viewModel = viewModel;
+            ViewModel = viewModel;
             DataContext = viewModel;
         }
 

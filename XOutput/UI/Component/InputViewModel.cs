@@ -26,9 +26,9 @@ namespace XOutput.UI.Component
 
         public void Edit()
         {
-            HidGuardianManager hidGuardianManager = ApplicationContext.Global.Resolve<HidGuardianManager>();
-            var controllerSettingsWindow = new InputSettingsWindow(new InputSettingsViewModel(new InputSettingsModel(), hidGuardianManager, Model.Device, isAdmin), Model.Device);
-            controllerSettingsWindow.ShowDialog();
+            var controllerSettingsWindow = ApplicationContext.Global.Resolve<InputSettingsWindow>();
+            controllerSettingsWindow.Initialize(Model.Device, isAdmin);
+            controllerSettingsWindow.ShowAndWait();
         }
 
         public void Dispose()

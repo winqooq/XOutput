@@ -5,7 +5,7 @@ namespace XOutput.Tools
 {
     public class HidGuardianManager
     {
-        static readonly string PARAMETERS = "SYSTEM\\CurrentControlSet\\Services\\HidGuardian\\Parameters";
+        static readonly string PARAMETERS = Registry.LocalMachine.ToString() + "\\SYSTEM\\CurrentControlSet\\Services\\HidGuardian\\Parameters";
         static readonly string WHITE_LIST = PARAMETERS + "\\Whitelist";
         static readonly string AFFECTED_DEVICES = "AffectedDevices";
 
@@ -19,16 +19,16 @@ namespace XOutput.Tools
 
         public void ResetPid(int pid)
         {
-            if (registryModifier.KeyExists(Registry.LocalMachine, WHITE_LIST))
+            if (registryModifier.KeyExists(WHITE_LIST))
             {
-                registryModifier.DeleteTree(Registry.LocalMachine, WHITE_LIST);
+                registryModifier.DeleteTree(WHITE_LIST);
             }
-            registryModifier.CreateKey(Registry.LocalMachine, WHITE_LIST + "\\" + pid);
+            registryModifier.CreateKey(WHITE_LIST + "\\" + pid);
         }
 
         public List<string> GetDevices()
         {
-            object value = registryModifier.GetValue(Registry.LocalMachine, PARAMETERS, AFFECTED_DEVICES);
+            object value = registryModifier.GetValue(PARAMETERS, AFFECTED_DEVICES);
             if (value is string[])
             {
                 return new List<string>(value as string[]);
@@ -44,7 +44,7 @@ namespace XOutput.Tools
             }
             var devices = GetDevices();
             devices.Add(device);
-            registryModifier.SetValue(Registry.LocalMachine, PARAMETERS, AFFECTED_DEVICES, devices.ToArray());
+            registryModifier.SetValue(PARAMETERS, AFFECTED_DEVICES, devices.ToArray());
         }
 
         public bool RemoveAffectedDevice(string device)
@@ -57,7 +57,7 @@ namespace XOutput.Tools
             bool removed = devices.Remove(device);
             if (removed)
             {
-                registryModifier.SetValue(Registry.LocalMachine, PARAMETERS, AFFECTED_DEVICES, devices.ToArray());
+                registryModifier.SetValue(PARAMETERS, AFFECTED_DEVICES, devices.ToArray());
             }
             return removed;
         }

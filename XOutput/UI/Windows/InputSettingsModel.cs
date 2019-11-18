@@ -1,114 +1,87 @@
 ﻿using System.Collections.ObjectModel;
+using XOutput.Tools;
 using XOutput.UI.Component;
 
 namespace XOutput.UI.Windows
 {
     public class InputSettingsModel : ModelBase
     {
-        private readonly ObservableCollection<IUpdatableView> inputAxisViews = new ObservableCollection<IUpdatableView>();
-        public ObservableCollection<IUpdatableView> InputAxisViews => inputAxisViews;
-        private readonly ObservableCollection<IUpdatableView> inputDPadViews = new ObservableCollection<IUpdatableView>();
-        public ObservableCollection<IUpdatableView> InputDPadViews => inputDPadViews;
-        private readonly ObservableCollection<IUpdatableView> inputButtonViews = new ObservableCollection<IUpdatableView>();
-        public ObservableCollection<IUpdatableView> InputButtonViews => inputButtonViews;
+        public ObservableCollection<IUpdatableView> InputAxisViews { get; private set; }
+        public ObservableCollection<IUpdatableView> InputSliderViews { get; private set; }
+        public ObservableCollection<IUpdatableView> InputDPadViews { get; private set; }
+        public ObservableCollection<IUpdatableView> InputButtonViews { get; private set; }
 
 
-        private string title;
+        private string title = "";
         public string Title
         {
             get => title;
-            set
-            {
-                if (title != value)
-                {
-                    title = value;
-                    OnPropertyChanged(nameof(Title));
-                }
-            }
+            set { Set(value, title, v => title = v, nameof(Title)); }
         }
 
-        private string forceFeedbackText;
+        private string forceFeedbackText = "";
         public string ForceFeedbackText
         {
             get => forceFeedbackText;
-            set
-            {
-                if (forceFeedbackText != value)
-                {
-                    forceFeedbackText = value;
-                    OnPropertyChanged(nameof(ForceFeedbackText));
-                }
-            }
+            set { Set(value, forceFeedbackText, v => forceFeedbackText = v, nameof(ForceFeedbackText)); }
         }
 
-        private string testButtonText;
+        private string testButtonText = "";
         public string TestButtonText
         {
             get => testButtonText;
-            set
-            {
-                if (testButtonText != value)
-                {
-                    testButtonText = value;
-                    OnPropertyChanged(nameof(TestButtonText));
-                }
-            }
+            set { Set(value, testButtonText, v => testButtonText = v, nameof(TestButtonText)); }
         }
 
         private bool forceFeedbackEnabled;
         public bool ForceFeedbackEnabled
         {
             get => forceFeedbackEnabled;
-            set
-            {
-                if (forceFeedbackEnabled != value)
-                {
-                    forceFeedbackEnabled = value;
-                    OnPropertyChanged(nameof(ForceFeedbackEnabled));
-                }
-            }
+            set { Set(value, forceFeedbackEnabled, v => forceFeedbackEnabled = v, nameof(ForceFeedbackEnabled)); }
         }
 
         private bool forceFeedbackAvailable;
         public bool ForceFeedbackAvailable
         {
             get => forceFeedbackAvailable;
-            set
-            {
-                if (forceFeedbackAvailable != value)
-                {
-                    forceFeedbackAvailable = value;
-                    OnPropertyChanged(nameof(ForceFeedbackAvailable));
-                }
-            }
+            set { Set(value, forceFeedbackAvailable, v => forceFeedbackAvailable = v, nameof(ForceFeedbackAvailable)); }
         }
 
         private bool isAdmin;
         public bool IsAdmin
         {
             get => isAdmin;
-            set
-            {
-                if (isAdmin != value)
-                {
-                    isAdmin = value;
-                    OnPropertyChanged(nameof(IsAdmin));
-                }
-            }
+            set { Set(value, isAdmin, v => isAdmin = v, nameof(IsAdmin)); }
         }
 
         private bool hidGuardianAdded;
         public bool HidGuardianAdded
         {
             get => hidGuardianAdded;
-            set
-            {
-                if (hidGuardianAdded != value)
-                {
-                    hidGuardianAdded = value;
-                    OnPropertyChanged(nameof(HidGuardianAdded));
-                }
-            }
+            set { Set(value, hidGuardianAdded, v => hidGuardianAdded = v, nameof(HidGuardianAdded)); }
+        }
+
+        [ResolverMethod(Scope.Prototype)]
+        public InputSettingsModel()
+        {
+            InputAxisViews = new ObservableCollection<IUpdatableView>();
+            InputSliderViews= new ObservableCollection<IUpdatableView>();
+            InputDPadViews = new ObservableCollection<IUpdatableView>();
+            InputButtonViews = new ObservableCollection<IUpdatableView>();
+        }
+
+        public override void CleanUp()
+        {
+            base.CleanUp();
+            InputAxisViews.Clear();
+            InputSliderViews.Clear();
+            InputDPadViews.Clear();
+            InputButtonViews.Clear();
+        }
+
+        public void RefreshVisiblity()
+        {
+            OnPropertyChanged(nameof(InputAxisViews), nameof(InputSliderViews), nameof(InputDPadViews), nameof(InputButtonViews));
         }
     }
 }

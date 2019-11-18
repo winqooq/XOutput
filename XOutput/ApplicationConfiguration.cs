@@ -16,11 +16,6 @@ namespace XOutput
             return new ArgumentParser();
         }
         [ResolverMethod]
-        public static RegistryModifier GetRegistryModifier()
-        {
-            return new RegistryModifier();
-        }
-        [ResolverMethod]
         public static Devices.Input.Mouse.MouseHook GetMouseHook()
         {
             return new Devices.Input.Mouse.MouseHook();

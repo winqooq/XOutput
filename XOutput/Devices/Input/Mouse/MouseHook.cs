@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -22,7 +23,7 @@ namespace XOutput.Devices.Input.Mouse
             {
                 if (nCode >= 0)
                 {
-                    Task.Run(() =>
+                    ThreadPool.QueueUserWorkItem((state) =>
                     {
                         var args = MouseHookEventArgs.Create((MouseMessage)wParam, lParam);
                         if (args != null)

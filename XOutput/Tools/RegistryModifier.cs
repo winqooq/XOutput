@@ -4,12 +4,12 @@ using XOutput.Logging;
 
 namespace XOutput.Tools
 {
-    public sealed class RegistryModifier
+    public sealed class RegistryModifier : IRegistryModifierService
     {
         /// <summary>
         /// Startup registry key.
         /// </summary>
-        public const string AutostartRegistry = @"Software\Microsoft\Windows\CurrentVersion\Run";
+        public static readonly string AutostartRegistry = Registry.CurrentUser.ToString() + @"Software\Microsoft\Windows\CurrentVersion\Run";
         /// <summary>
         /// XOutput registry value
         /// </summary>
@@ -21,34 +21,12 @@ namespace XOutput.Tools
 
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(RegistryModifier));
 
-        /// <summary>
-        /// Gets or sets the autostart.
-        /// </summary>
-        public bool Autostart
+        private readonly RegistryModifierService registryModifierService;
+
+        [ResolverMethod]
+        public RegistryModifier(RegistryModifierService registryModifierService)
         {
-            get
-            {
-                using (var key = GetRegistryKey())
-                {
-                    bool exists = key.GetValue(AutostartValueKey) != null;
-                    logger.Debug($"{AutostartValueKey} registry is " + (exists ? "" : "not ") + "found");
-                    return exists;
-                }
-            }
-            set
-            {
-                if (Autostart != value)
-                {
-                    if (value)
-                    {
-                        SetAutostart();
-                    }
-                    else
-                    {
-                        ClearAutostart();
-                    }
-                }
-            }
+            this.registryModifierService = registryModifierService;
         }
 
         /// <summary>
@@ -56,13 +34,9 @@ namespace XOutput.Tools
         /// </summary>
         public void SetAutostart()
         {
-            using (var key = GetRegistryKey())
-            {
-                var filename = Process.GetCurrentProcess().MainModule.FileName;
-                string value = $"\"{filename}\" {AutostartParams}";
-                key.SetValue(AutostartValueKey, value);
-                logger.Debug($"{AutostartValueKey} registry set to {value}");
-            }
+            var filename = Process.GetCurrentProcess().MainModule.FileName;
+            string value = $"\"{filename}\" {AutostartParams}";
+            SetValue(AutostartRegistry, AutostartValueKey, value);
         }
 
         /// <summary>
@@ -70,49 +44,37 @@ namespace XOutput.Tools
         /// </summary>
         public void ClearAutostart()
         {
-            using (var key = GetRegistryKey())
-            {
-                key.DeleteValue(AutostartValueKey);
-                logger.Debug($"{AutostartValueKey} registry is deleted");
-            }
+            DeleteValue(AutostartRegistry, AutostartValueKey);
         }
 
-        private RegistryKey GetRegistryKey(bool writeable = true)
+        public bool KeyExists(string key)
         {
-            return Registry.CurrentUser.OpenSubKey(AutostartRegistry, writeable);
+            return registryModifierService.KeyExists(key);
         }
 
-        public bool KeyExists(RegistryKey registryKey, string subkey)
+        public void DeleteTree(string key)
         {
-            using (var registry = registryKey.OpenSubKey(subkey))
-            {
-                return registry != null;
-            }
+            registryModifierService.DeleteTree(key);
         }
 
-        public void DeleteTree(RegistryKey registryKey, string subkey)
+        public void CreateKey(string key)
         {
-            registryKey.DeleteSubKeyTree(subkey, false);
-            registryKey.Close();
+            registryModifierService.CreateKey(key);
         }
 
-        public void CreateKey(RegistryKey registryKey, string subkey)
+        public object GetValue(string key, string value)
         {
-            var registry = registryKey.CreateSubKey(subkey);
-            registry.Close();
+            return registryModifierService.GetValue(key, value);
         }
 
-        public object GetValue(RegistryKey registryKey, string subkey, string key)
+        public void SetValue(string key, string value, object newValue)
         {
-            return registryKey.OpenSubKey(subkey).GetValue(key);
+            registryModifierService.SetValue(key, value, newValue);
         }
 
-        public void SetValue(RegistryKey registryKey, string subkey, string key, object value)
+        public void DeleteValue(string key, string value)
         {
-            using (var registry = registryKey.OpenSubKey(subkey, true))
-            {
-                registry.SetValue(key, value);
-            }
+            throw new System.NotImplementedException();
         }
     }
 }
