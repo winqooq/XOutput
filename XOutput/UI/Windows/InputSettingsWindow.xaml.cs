@@ -6,16 +6,16 @@ using XOutput.Tools;
 
 namespace XOutput.UI.Windows
 {
-    /// <summary>
-    /// Interaction logic for ControllerSettings.xaml
-    /// </summary>
     public partial class InputSettingsWindow : WindowBase<InputSettingsViewModel, InputSettingsModel>
     {
+        private readonly SettingsManager settingsManager;
+
         private IInputDevice device;
 
         [ResolverMethod(Scope.Prototype)]
-        public InputSettingsWindow(InputSettingsViewModel viewModel) : base(viewModel)
+        public InputSettingsWindow(InputSettingsViewModel viewModel, SettingsManager settingsManager) : base(viewModel)
         {
+            this.settingsManager = settingsManager;
             InitializeComponent();
         }
 
@@ -58,6 +58,17 @@ namespace XOutput.UI.Windows
         private void RemoveHidGuardianButtonClick(object sender, RoutedEventArgs e)
         {
             ViewModel.RemoveHidGuardian();
+        }
+
+        private void CloseClick(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void SaveClick(object sender, RoutedEventArgs e)
+        {
+            settingsManager.SaveInputSettings(device.InputConfiguration);
+            Close();
         }
     }
 }

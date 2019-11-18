@@ -14,6 +14,10 @@
             <ColumnDefinition Width="300" MinWidth="300"/>
             <ColumnDefinition Width="*" MinWidth="300"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
         <!-- Direct Input -->
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
@@ -82,5 +86,11 @@
                 </GroupBox>
             </StackPanel>
         </ScrollViewer>
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Width="100" Margin="10 0" Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Close'}"
+                    Click="CloseClick"/>
+            <Button Width="100" Margin="10 0" Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Save'}"
+                    Click="SaveClick" IsEnabled="{Binding Model.Changed}"/>
+        </StackPanel>
     </Grid>
 </UI:WindowBase>

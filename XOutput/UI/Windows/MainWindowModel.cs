@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Controls;
 using XOutput.Tools;
 using XOutput.UI.Component;
 
@@ -6,21 +7,31 @@ namespace XOutput.UI.Windows
 {
     public class MainWindowModel : ModelBase
     {
-        private readonly ObservableCollection<InputView> inputs = new ObservableCollection<InputView>();
-        public ObservableCollection<InputView> Inputs { get { return inputs; } }
+        public ObservableCollection<Label> Events { get; private set; }
+        public ObservableCollection<InputView> Inputs { get; private set; }
+        public ObservableCollection<ControllerView> Controllers { get; private set; }
 
-        private readonly ObservableCollection<ControllerView> controllers = new ObservableCollection<ControllerView>();
-        public ObservableCollection<ControllerView> Controllers { get { return controllers; } }
+        private bool isOpen;
+
+        public bool IsOpen
+        {
+            get => isOpen;
+            set { Set(value, isOpen, v => isOpen = v, nameof(IsOpen)); }
+        }
+
 
         [ResolverMethod(Scope.Prototype)]
         public MainWindowModel()
         {
-
+            Events = new ObservableCollection<Label>();
+            Inputs = new ObservableCollection<InputView>();
+            Controllers = new ObservableCollection<ControllerView>();
         }
 
         public override void CleanUp()
         {
             base.CleanUp();
+            Events.Clear();
             Inputs.Clear();
             Controllers.Clear();
         }

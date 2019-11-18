@@ -83,7 +83,7 @@ namespace XOutput.Devices.Input.DirectInput
         /// <summary>
         /// <para>Implements <see cref="IInputDevice.InputConfiguration"/></para>
         /// </summary>
-        public InputConfig InputConfiguration => inputConfig;
+        public InputConfig InputConfiguration { get; set; }
 
         public string HardwareID
         {
@@ -116,7 +116,6 @@ namespace XOutput.Devices.Input.DirectInput
         private readonly DeviceState state;
         private readonly EffectInfo force;
         private readonly List<DirectDeviceForceFeedback> actuators = new List<DirectDeviceForceFeedback>();
-        private readonly InputConfig inputConfig;
         private bool connected = false;
         private readonly Thread inputRefresher;
         private bool disposed = false;
@@ -195,7 +194,7 @@ namespace XOutput.Devices.Input.DirectInput
             }
             state = new DeviceState(sources, joystick.Capabilities.PovCount);
             deviceInputChangedEventArgs = new DeviceInputChangedEventArgs(this);
-            inputConfig = new InputConfig(UniqueId);
+            InputConfiguration = new InputConfig(UniqueId);
             inputRefresher = new Thread(InputRefresher)
             {
                 Name = ToString() + " input reader"
@@ -277,7 +276,7 @@ namespace XOutput.Devices.Input.DirectInput
             {
                 return;
             }
-            if (!inputConfig.ForceFeedback)
+            if (!InputConfiguration.ForceFeedback)
             {
                 big = 0;
                 small = 0;

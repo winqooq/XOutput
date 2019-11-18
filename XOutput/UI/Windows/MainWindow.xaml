@@ -11,6 +11,15 @@
                x:TypeArguments="local:MainWindowViewModel,local:MainWindowModel"
                d:DataContext="{d:DesignInstance Type=local:MainWindowModel, IsDesignTimeCreatable=False}"
                Title="XOutput" Width="700" Height="700">
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl>
+            <Controls:Flyout Header="Flyout" Position="Right" Width="400" Theme="Accent" IsOpen="{Binding Model.IsOpen, Mode=TwoWay}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Model.Events}"/>
+                </ScrollViewer>
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -20,6 +29,7 @@
             <RowDefinition Height="3"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
         <tb:TaskbarIcon Visibility="Visible" ToolTipText="XOutput" IconSource="/Resources/icon.ico" MenuActivation="RightClick" PopupActivation="LeftClick"
                         TrayMouseDoubleClick="TaskbarIconTrayMouseDoubleClick">
             <tb:TaskbarIcon.ContextMenu>
@@ -28,22 +38,34 @@
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
-        <Menu>
-            <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='FileMenu'}">
-                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='GameControllersMenu'}" Click="GameControllersClick"/>
-                <Separator/>
-                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ExitMenu'}" Click="ExitClick"/>
-            </MenuItem>
-            <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ToolsMenu'}">
-                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='SettingsMenu'}" Click="SettingsClick"/>
-                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='DiagnosticsMenu'}" Click="DiagnosticsClick"/>
-            </MenuItem>
-            <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HelpMenu'}">
-                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='AboutMenu'}" Click="AboutClick"/>
-            </MenuItem>
-            <Controls:Badged Badge="3" BadgePlacementMode="Left">
-            </Controls:Badged>
-        </Menu>
+        <Grid>
+            <Menu>
+                <Menu.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <DockPanel HorizontalAlignment="Stretch"/>
+                    </ItemsPanelTemplate>
+                </Menu.ItemsPanel>
+                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='FileMenu'}">
+                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='GameControllersMenu'}" Click="GameControllersClick"/>
+                    <Separator/>
+                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ExitMenu'}" Click="ExitClick"/>
+                </MenuItem>
+                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ToolsMenu'}">
+                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='SettingsMenu'}" Click="SettingsClick"/>
+                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='DiagnosticsMenu'}" Click="DiagnosticsClick"/>
+                </MenuItem>
+                <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HelpMenu'}">
+                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='AboutMenu'}" Click="AboutClick"/>
+                </MenuItem>
+                <MenuItem HorizontalAlignment="Right" Click="OpenFlyout" Margin="0,0,5,0">
+                    <MenuItem.Header>
+                        <Controls:Badged Badge="3" BadgePlacementMode="Right" Grid.Column="2">
+                            <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Notifications'}" Margin="0,0,10,0"/>
+                        </Controls:Badged>
+                    </MenuItem.Header>
+                </MenuItem>
+            </Menu>
+        </Grid>
         <GroupBox Grid.Row="1" Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='DirectInput'}" Margin="0,0,0,5">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Bottom">

@@ -216,6 +216,7 @@ namespace XOutput.UI.Windows
                 if (!Model.Inputs.Select(c => c.ViewModel.Model.Device).OfType<DirectDevice>().Any(d => d.Id == instance.InstanceGuid))
                 {
                     var device = directInputDevices.CreateDirectDevice(instance);
+                    device.InputConfiguration = settingsManager.LoadInputConfig(device.UniqueId);
                     if (device == null)
                     {
                         continue;

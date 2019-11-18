@@ -157,5 +157,11 @@ namespace XOutput.UI.Windows
                 TaskbarIconTrayMouseDoubleClick(this, null);
             });
         }
+
+        private void OpenFlyout(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Model.IsOpen = true;
+            ViewModel.Model.Events.Add(new System.Windows.Controls.Label { Content = "test" });
+        }
     }
 }

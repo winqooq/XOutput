@@ -47,7 +47,7 @@ namespace XOutput.Tools
             return Load(() => new InputConfig(id), INPUT_DIRECTORY, id + EXTENSION);
         }
 
-        public void SaveGeneralSettings(InputConfig settings)
+        public void SaveInputSettings(InputConfig settings)
         {
             Save(settings, INPUT_DIRECTORY, settings.Id + EXTENSION);
         }
