@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using XOutput.Tools;
 
 namespace XOutput.Devices.Input.Mouse
 {
@@ -16,6 +17,12 @@ namespace XOutput.Devices.Input.Mouse
         public event MouseHookEvent MouseEvent;
         private IntPtr hookPtr = IntPtr.Zero;
         private HookProc hook;
+
+        [ResolverMethod]
+        public MouseHook()
+        {
+
+        }
 
         public void StartHook()
         {

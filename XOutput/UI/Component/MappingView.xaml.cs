@@ -8,30 +8,34 @@ namespace XOutput.UI.Component
     /// </summary>
     public partial class MappingView : UserControl, IViewBase<MappingViewModel, MappingModel>
     {
-        protected readonly MappingViewModel viewModel;
-        public MappingViewModel ViewModel => viewModel;
+        public MappingViewModel ViewModel { get; private set; }
 
         public MappingView(MappingViewModel viewModel)
         {
-            this.viewModel = viewModel;
+            ViewModel = viewModel;
             DataContext = viewModel;
             InitializeComponent();
         }
 
+        public void CleanUp()
+        {
+            ViewModel.CleanUp();
+        }
+
         public void Refresh()
         {
-            viewModel.Refresh();
+            ViewModel.Refresh();
         }
 
         private void ConfigureClick(object sender, RoutedEventArgs e)
         {
-            viewModel.Configure();
+            ViewModel.Configure();
             Refresh();
         }
 
         private void InvertClick(object sender, RoutedEventArgs e)
         {
-            viewModel.Invert();
+            ViewModel.Invert();
         }
     }
 }

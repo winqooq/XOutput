@@ -8,14 +8,18 @@ namespace XOutput.UI.Windows
     /// </summary>
     public partial class DiagnosticsWindow : Window, IViewBase<DiagnosticsViewModel, DiagnosticsModel>
     {
-        private readonly DiagnosticsViewModel viewModel;
-        public DiagnosticsViewModel ViewModel => viewModel;
+        public DiagnosticsViewModel ViewModel { get; private set; }
 
         public DiagnosticsWindow(DiagnosticsViewModel viewModel)
         {
-            this.viewModel = viewModel;
+            ViewModel = viewModel;
             DataContext = viewModel;
             InitializeComponent();
+        }
+
+        public void CleanUp()
+        {
+            ViewModel.CleanUp();
         }
     }
 }

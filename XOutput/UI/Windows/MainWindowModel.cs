@@ -19,6 +19,15 @@ namespace XOutput.UI.Windows
             set { Set(value, isOpen, v => isOpen = v, nameof(IsOpen)); }
         }
 
+        private int notificationCount;
+
+        public int NotificationCount
+        {
+            get => notificationCount;
+            set { Set(value, notificationCount, v => notificationCount = v, nameof(NotificationCount)); }
+        }
+
+
 
         [ResolverMethod(Scope.Prototype)]
         public MainWindowModel()

@@ -8,19 +8,23 @@ namespace XOutput.UI.Component
     /// </summary>
     public partial class DPadView : UserControl, IUpdatableView, IViewBase<DPadViewModel, DPadModel>
     {
-        protected readonly DPadViewModel viewModel;
-        public DPadViewModel ViewModel => viewModel;
+        public DPadViewModel ViewModel { get; private set; }
 
         public DPadView(DPadViewModel viewModel)
         {
-            this.viewModel = viewModel;
+            ViewModel = viewModel;
             DataContext = viewModel;
             InitializeComponent();
         }
 
+        public void CleanUp()
+        {
+            ViewModel.CleanUp();
+        }
+
         public void UpdateValues(IDevice device)
         {
-            viewModel.UpdateValues(device);
+            ViewModel.UpdateValues(device);
         }
     }
 }

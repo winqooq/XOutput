@@ -12,21 +12,25 @@ namespace XOutput.UI.Windows
     public partial class ControllerSettingsWindow : Window, IViewBase<ControllerSettingsViewModel, ControllerSettingsModel>
     {
         private readonly DispatcherTimer timer = new DispatcherTimer();
-        private readonly ControllerSettingsViewModel viewModel;
-        public ControllerSettingsViewModel ViewModel => viewModel;
+        public ControllerSettingsViewModel ViewModel { get; private set; }
         private readonly GameController controller;
 
         public ControllerSettingsWindow(ControllerSettingsViewModel viewModel, GameController controller)
         {
             this.controller = controller;
-            this.viewModel = viewModel;
+            ViewModel = viewModel;
             DataContext = viewModel;
             InitializeComponent();
         }
 
+        public void CleanUp()
+        {
+            ViewModel.CleanUp();
+        }
+
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
-            viewModel.Update();
+            ViewModel.Update();
             timer.Interval = TimeSpan.FromMilliseconds(10);
             timer.Tick += TimerTick;
             timer.Start();
@@ -34,30 +38,30 @@ namespace XOutput.UI.Windows
 
         private void TimerTick(object sender, EventArgs e)
         {
-            viewModel.Update();
+            ViewModel.Update();
         }
 
         protected override void OnClosed(EventArgs e)
         {
             timer.Tick -= TimerTick;
             timer.Stop();
-            viewModel.Dispose();
+            ViewModel.Dispose();
             base.OnClosed(e);
         }
 
         private void ConfigureAllButtonClick(object sender, RoutedEventArgs e)
         {
-            viewModel.ConfigureAll();
+            ViewModel.ConfigureAll();
         }
 
         private void CheckBoxChecked(object sender, RoutedEventArgs e)
         {
-            viewModel.SetStartWhenConnected();
+            ViewModel.SetStartWhenConnected();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            viewModel.SetForceFeedback();
+            ViewModel.SetForceFeedback();
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)

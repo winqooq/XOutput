@@ -8,19 +8,23 @@ namespace XOutput.UI.Component
     /// </summary>
     public partial class ButtonView : UserControl, IUpdatableView, IViewBase<ButtonViewModel, ButtonModel>
     {
-        protected readonly ButtonViewModel viewModel;
-        public ButtonViewModel ViewModel => viewModel;
+        public ButtonViewModel ViewModel { get; private set; }
 
         public ButtonView(ButtonViewModel viewModel)
         {
-            this.viewModel = viewModel;
+            ViewModel = viewModel;
             DataContext = viewModel;
             InitializeComponent();
         }
 
+        public void CleanUp()
+        {
+            ViewModel.CleanUp();
+        }
+
         public void UpdateValues(IDevice device)
         {
-            viewModel.UpdateValues(device);
+            ViewModel.UpdateValues(device);
         }
     }
 }

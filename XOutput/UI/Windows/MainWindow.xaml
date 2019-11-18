@@ -59,7 +59,7 @@
                 </MenuItem>
                 <MenuItem HorizontalAlignment="Right" Click="OpenFlyout" Margin="0,0,5,0">
                     <MenuItem.Header>
-                        <Controls:Badged Badge="3" BadgePlacementMode="Right" Grid.Column="2">
+                        <Controls:Badged Badge="{Binding Model.NotificationCount}" BadgePlacementMode="Right">
                             <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Notifications'}" Margin="0,0,10,0"/>
                         </Controls:Badged>
                     </MenuItem.Header>

@@ -7,14 +7,18 @@ namespace XOutput.UI.Component
     /// </summary>
     public partial class DiagnosticsItemView : UserControl, IViewBase<DiagnosticsItemViewModel, DiagnosticsItemModel>
     {
-        protected readonly DiagnosticsItemViewModel viewModel;
-        public DiagnosticsItemViewModel ViewModel => viewModel;
+        public DiagnosticsItemViewModel ViewModel { get; private set; }
 
         public DiagnosticsItemView(DiagnosticsItemViewModel viewModel)
         {
-            this.viewModel = viewModel;
+            ViewModel = viewModel;
             DataContext = viewModel;
             InitializeComponent();
+        }
+
+        public void CleanUp()
+        {
+            ViewModel.CleanUp();
         }
     }
 }

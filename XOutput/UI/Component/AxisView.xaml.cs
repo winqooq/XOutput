@@ -8,19 +8,23 @@ namespace XOutput.UI.Component
     /// </summary>
     public partial class AxisView : UserControl, IUpdatableView, IViewBase<AxisViewModel, AxisModel>
     {
-        protected readonly AxisViewModel viewModel;
-        public AxisViewModel ViewModel => viewModel;
+        public AxisViewModel ViewModel { get; private set; }
 
         public AxisView(AxisViewModel viewModel)
         {
-            this.viewModel = viewModel;
+            ViewModel = viewModel;
             DataContext = viewModel;
             InitializeComponent();
         }
 
+        public void CleanUp()
+        {
+            ViewModel.CleanUp();
+        }
+
         public void UpdateValues(IDevice device)
         {
-            viewModel.UpdateValues(device);
+            ViewModel.UpdateValues(device);
         }
     }
 }

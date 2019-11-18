@@ -13,12 +13,7 @@ namespace XOutput
         [ResolverMethod]
         public static ArgumentParser GetArgumentParser()
         {
-            return new ArgumentParser();
-        }
-        [ResolverMethod]
-        public static Devices.Input.Mouse.MouseHook GetMouseHook()
-        {
-            return new Devices.Input.Mouse.MouseHook();
+            return new ArgumentParser(Environment.GetCommandLineArgs().Skip(1).ToArray());
         }
     }
 }

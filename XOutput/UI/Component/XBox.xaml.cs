@@ -4,9 +4,6 @@ using XOutput.Devices.XInput;
 
 namespace XOutput.UI.Component
 {
-    /// <summary>
-    /// Interaction logic for XBox.xaml
-    /// </summary>
     public partial class XBox : Viewbox, IViewBase<XBoxViewModel, XBoxModel>
     {
         public static readonly DependencyProperty XInputTypeProperty = DependencyProperty.Register("XInputType", typeof(XInputTypes), typeof(XBox), new FrameworkPropertyMetadata(OnXInputTypeChanged, null));
@@ -34,15 +31,18 @@ namespace XOutput.UI.Component
             get { return (bool)GetValue(HighlightProperty); }
             set { SetValue(HighlightProperty, value); ViewModel.Model.Highlight = value; }
         }
-
-        protected readonly XBoxViewModel viewModel;
-        public XBoxViewModel ViewModel => viewModel;
+        public XBoxViewModel ViewModel { get; private set; }
 
         public XBox()
         {
-            viewModel = new XBoxViewModel(new XBoxModel());
-            DataContext = viewModel;
+            ViewModel = new XBoxViewModel(new XBoxModel());
+            DataContext = ViewModel;
             InitializeComponent();
+        }
+
+        public void CleanUp()
+        {
+            ViewModel.CleanUp();
         }
     }
 }

@@ -11,24 +11,28 @@ namespace XOutput.UI.Windows
     /// </summary>
     public partial class AutoConfigureWindow : Window, IViewBase<AutoConfigureViewModel, AutoConfigureModel>
     {
-        private readonly AutoConfigureViewModel viewModel;
         private readonly DispatcherTimer timer = new DispatcherTimer();
         private readonly bool timed;
-        public AutoConfigureViewModel ViewModel => viewModel;
+        public AutoConfigureViewModel ViewModel { get; private set; }
 
         public AutoConfigureWindow(AutoConfigureViewModel viewModel, bool timed)
         {
-            this.viewModel = viewModel;
+            ViewModel = viewModel;
             this.timed = timed;
             DataContext = viewModel;
             InitializeComponent();
         }
 
+        public void CleanUp()
+        {
+            ViewModel.CleanUp();
+        }
+
         private async void WindowLoaded(object sender, RoutedEventArgs e)
         {
             await Task.Delay(100);
-            viewModel.Initialize();
-            viewModel.IsMouseOverButtons = () =>
+            ViewModel.Initialize();
+            ViewModel.IsMouseOverButtons = () =>
             {
                 return DisableButton.IsMouseOver || SaveButton.IsMouseOver;
             };
@@ -42,9 +46,9 @@ namespace XOutput.UI.Windows
 
         private void TimerTick(object sender, EventArgs e)
         {
-            if (viewModel.IncreaseTime())
+            if (ViewModel.IncreaseTime())
             {
-                bool hasNextInput = viewModel.SaveValues();
+                bool hasNextInput = ViewModel.SaveValues();
                 if (!hasNextInput)
                 {
                     Close();
@@ -54,7 +58,7 @@ namespace XOutput.UI.Windows
 
         private void DisableClick(object sender, RoutedEventArgs e)
         {
-            if (!viewModel.SaveDisableValues())
+            if (!ViewModel.SaveDisableValues())
             {
                 Close();
             }
@@ -62,7 +66,7 @@ namespace XOutput.UI.Windows
 
         private void SaveClick(object sender, RoutedEventArgs e)
         {
-            if (!viewModel.SaveValues())
+            if (!ViewModel.SaveValues())
             {
                 Close();
             }
@@ -77,7 +81,7 @@ namespace XOutput.UI.Windows
         {
             timer.Tick -= TimerTick;
             timer.Stop();
-            viewModel.Close();
+            ViewModel.Close();
         }
     }
 }
