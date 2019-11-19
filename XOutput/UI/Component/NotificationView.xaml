@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="XOutput.UI.Component.NotificationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:local="clr-namespace:XOutput.UI.Component"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=local:NotificationViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="40" d:DesignWidth="400">
+    <Grid Margin="0,5,0,5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="2" />
+            <RowDefinition Height="3" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="40"/>
+        </Grid.ColumnDefinitions>
+        <iconPacks:PackIconFontAwesome Grid.Column="0" Kind="ExclamationSolid" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Height="30" Width="30"
+                                       DockPanel.Dock="Left" Visibility="{Binding Model.Important, Converter={StaticResource BoolToVisibilityConverter}}"/>
+        <Grid Grid.Column="1" VerticalAlignment="Stretch">
+            <Label VerticalAlignment="Center">
+                <Label.Content>
+                    <MultiBinding Converter="{StaticResource DynamicLanguageConverter}">
+                        <Binding Path="LanguageModel.Data" />
+                        <Binding Path="Model.Text" />
+                        <Binding Path="Model.TextArguments" />
+                    </MultiBinding>
+                </Label.Content>
+            </Label>
+        </Grid>
+        <Button Grid.Column="2" Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" Height="30" Width="30" Click="ExitClick">
+            <iconPacks:PackIconFontAwesome Kind="TimesSolid" Foreground="White" />
+        </Button>
+        <Grid Grid.Row="2" Grid.ColumnSpan="3" DockPanel.Dock="Bottom" Background="White" HorizontalAlignment="Left" Width="400" Name="TimerGrid"/>
+    </Grid>
+</UserControl>

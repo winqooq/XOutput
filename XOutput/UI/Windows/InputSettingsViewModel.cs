@@ -30,15 +30,15 @@ namespace XOutput.UI.Windows
             updateTimer.Tick += UpdateTimerTick;
         }
 
-        public void Initialize(IInputDevice device, bool isAdmin)
+        public void Initialize(IInputDevice device)
         {
             this.device = device;
             Model.ForceFeedbackEnabled = device.InputConfiguration.ForceFeedback;
             Model.Title = device.DisplayName;
             CreateInputControls();
             SetForceFeedback();
-            Model.IsAdmin = isAdmin && device.HardwareID != null;
-            if (Model.IsAdmin)
+            Model.HidGuardianAvailable = device.HardwareID != null;
+            if (Model.HidGuardianAvailable)
             {
                 Model.HidGuardianAdded = hidGuardianManager.IsAffected(device.HardwareID);
             }
@@ -87,7 +87,7 @@ namespace XOutput.UI.Windows
         public void AddHidGuardian()
         {
             hidGuardianManager.AddAffectedDevice(device.HardwareID);
-            if (Model.IsAdmin)
+            if (Model.HidGuardianAvailable)
             {
                 Model.HidGuardianAdded = hidGuardianManager.IsAffected(device.HardwareID);
             }
@@ -96,7 +96,7 @@ namespace XOutput.UI.Windows
         public void RemoveHidGuardian()
         {
             hidGuardianManager.RemoveAffectedDevice(device.HardwareID);
-            if (Model.IsAdmin)
+            if (Model.HidGuardianAvailable)
             {
                 Model.HidGuardianAdded = hidGuardianManager.IsAffected(device.HardwareID);
             }

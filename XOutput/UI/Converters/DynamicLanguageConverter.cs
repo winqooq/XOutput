@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Data;
 
 namespace XOutput.UI.Converters
@@ -22,11 +23,16 @@ namespace XOutput.UI.Converters
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             Dictionary<string, string> translations = values[0] as Dictionary<string, string>;
+            var parameters = new string[0];
+            if (values.Length > 2)
+            {
+                parameters = values[2] as string[];
+            }
             string key;
             if (values[1] is Enum)
             {
                 key = values[1].GetType().Name + "." + values[1].ToString();
-                return getTranslation(translations, key) ?? values[1].ToString();
+                return getTranslation(translations, key, parameters) ?? values[1].ToString();
             }
             else if (values[1] is string)
             {
@@ -44,7 +50,7 @@ namespace XOutput.UI.Converters
             {
                 key = values[1] as string;
             }
-            return getTranslation(translations, key) ?? key;
+            return getTranslation(translations, key, parameters) ?? key;
         }
 
         /// <summary>
@@ -60,11 +66,15 @@ namespace XOutput.UI.Converters
             throw new NotImplementedException();
         }
 
-        protected string getTranslation(Dictionary<string, string> translations, string key)
+        protected string getTranslation(Dictionary<string, string> translations, string key, string[] parameters)
         {
             if (translations == null || key == null || !translations.ContainsKey(key))
             {
                 return null;
+            }
+            if (parameters.Length > 0)
+            {
+                return string.Format(translations[key], parameters);
             }
             return translations[key];
         }

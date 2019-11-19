@@ -27,7 +27,7 @@ namespace XOutput.UI.Component
         public void Edit()
         {
             var controllerSettingsWindow = ApplicationContext.Global.Resolve<InputSettingsWindow>();
-            controllerSettingsWindow.Initialize(Model.Device, isAdmin);
+            controllerSettingsWindow.Initialize(Model.Device);
             controllerSettingsWindow.ShowAndWait();
         }
 

@@ -12,42 +12,42 @@ namespace XOutput.UI.Windows
         public string SelectedLanguage
         {
             get => selectedLanguage;
-            set { Set(value, selectedLanguage, (v) => selectedLanguage = v, nameof(SelectedLanguage)); }
+            set { Set(value, ref selectedLanguage, nameof(SelectedLanguage)); }
         }
 
         private bool closeToTray;
         public bool CloseToTray
         {
             get => closeToTray;
-            set { Set(value, closeToTray, (v) => closeToTray = v, nameof(CloseToTray)); }
+            set { Set(value, ref closeToTray, nameof(CloseToTray)); }
         }
 
         private bool hidGuardianEnabled;
         public bool HidGuardianEnabled
         {
             get => hidGuardianEnabled;
-            set { Set(value, hidGuardianEnabled, (v) => hidGuardianEnabled = v, nameof(HidGuardianEnabled)); }
+            set { Set(value, ref hidGuardianEnabled, nameof(HidGuardianEnabled)); }
         }
 
         private bool showAll;
         public bool ShowAll
         {
             get => showAll;
-            set { Set(value, showAll, (v) => showAll = v, nameof(ShowAll)); }
+            set { Set(value, ref showAll, nameof(ShowAll)); }
         }
 
         private bool runAtStartup;
         public bool RunAtStartup
         {
             get => runAtStartup;
-            set { Set(value, runAtStartup, (v) => runAtStartup = v, nameof(RunAtStartup)); }
+            set { Set(value, ref runAtStartup, nameof(RunAtStartup)); }
         }
 
         private bool changed;
         public bool Changed
         {
             get => changed;
-            set { Set(value, changed, (v) => changed = v, nameof(Changed)); }
+            set { Set(value, ref changed, nameof(Changed)); }
         }
 
         [ResolverMethod(Scope.Prototype)]

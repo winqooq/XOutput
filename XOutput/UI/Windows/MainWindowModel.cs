@@ -7,7 +7,7 @@ namespace XOutput.UI.Windows
 {
     public class MainWindowModel : ModelBase
     {
-        public ObservableCollection<Label> Events { get; private set; }
+        public ObservableCollection<NotificationView> Notifications { get; private set; }
         public ObservableCollection<InputView> Inputs { get; private set; }
         public ObservableCollection<ControllerView> Controllers { get; private set; }
 
@@ -16,7 +16,7 @@ namespace XOutput.UI.Windows
         public bool IsOpen
         {
             get => isOpen;
-            set { Set(value, isOpen, v => isOpen = v, nameof(IsOpen)); }
+            set { Set(value, ref isOpen, nameof(IsOpen)); }
         }
 
         private int notificationCount;
@@ -24,7 +24,7 @@ namespace XOutput.UI.Windows
         public int NotificationCount
         {
             get => notificationCount;
-            set { Set(value, notificationCount, v => notificationCount = v, nameof(NotificationCount)); }
+            set { Set(value, ref notificationCount, nameof(NotificationCount)); }
         }
 
 
@@ -32,7 +32,7 @@ namespace XOutput.UI.Windows
         [ResolverMethod(Scope.Prototype)]
         public MainWindowModel()
         {
-            Events = new ObservableCollection<Label>();
+            Notifications = new ObservableCollection<NotificationView>();
             Inputs = new ObservableCollection<InputView>();
             Controllers = new ObservableCollection<ControllerView>();
         }
@@ -40,7 +40,7 @@ namespace XOutput.UI.Windows
         public override void CleanUp()
         {
             base.CleanUp();
-            Events.Clear();
+            Notifications.Clear();
             Inputs.Clear();
             Controllers.Clear();
         }

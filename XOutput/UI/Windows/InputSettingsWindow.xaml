@@ -78,9 +78,11 @@
                 </GroupBox>
                 <GroupBox Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HidGuardian'}">
                     <StackPanel>
-                        <StackPanel IsEnabled="{Binding Model.IsAdmin}">
-                            <Button Height="30" Margin="5" Click="AddHidGuardianButtonClick" Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HidGuardianAdd'}"/>
-                            <Button Height="30" Margin="5" Click="RemoveHidGuardianButtonClick" Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HidGuardianRemove'}"/>
+                        <StackPanel IsEnabled="{Binding Model.HidGuardianAvailable}">
+                            <Button Height="30" Margin="5" Click="AddHidGuardianButtonClick" Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HidGuardianAdd'}"
+                                    IsEnabled="{Binding Model.HidGuardianAdded, Converter={StaticResource BoolInverterConverter}}"/>
+                            <Button Height="30" Margin="5" Click="RemoveHidGuardianButtonClick" Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HidGuardianRemove'}"
+                                    IsEnabled="{Binding Model.HidGuardianAdded}"/>
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>

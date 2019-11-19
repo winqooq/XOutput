@@ -23,6 +23,7 @@ namespace XOutput.Tools
             {
                 registryModifier.DeleteTree(WHITE_LIST);
             }
+            registryModifier.CreateKey(WHITE_LIST);
             registryModifier.CreateKey(WHITE_LIST + "\\" + pid);
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using XOutput.Logging;
 
@@ -21,12 +22,14 @@ namespace XOutput.Tools
 
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(RegistryModifier));
 
-        private readonly RegistryModifierService registryModifierService;
+        private readonly IRegistryModifierService registryModifierService;
+        private readonly IRegistryModifierService externalRegistryModifierService;
 
         [ResolverMethod]
-        public RegistryModifier(RegistryModifierService registryModifierService)
+        public RegistryModifier(RegistryModifierService registryModifierService, ExternalRegistryModifierService externalRegistryModifierService)
         {
             this.registryModifierService = registryModifierService;
+            this.externalRegistryModifierService = externalRegistryModifierService;
         }
 
         /// <summary>
@@ -49,32 +52,62 @@ namespace XOutput.Tools
 
         public bool KeyExists(string key)
         {
-            return registryModifierService.KeyExists(key);
+            return Try(r => r.KeyExists(key));
         }
 
         public void DeleteTree(string key)
         {
-            registryModifierService.DeleteTree(key);
+            Try(r => r.DeleteTree(key));
         }
 
         public void CreateKey(string key)
         {
-            registryModifierService.CreateKey(key);
+            Try(r => r.CreateKey(key));
         }
 
         public object GetValue(string key, string value)
         {
-            return registryModifierService.GetValue(key, value);
+            return Try(r => r.GetValue(key, value));
         }
 
         public void SetValue(string key, string value, object newValue)
         {
-            registryModifierService.SetValue(key, value, newValue);
+            Try(r => r.SetValue(key, value, newValue));
         }
 
         public void DeleteValue(string key, string value)
         {
-            throw new System.NotImplementedException();
+            Try(r => r.DeleteValue(key, value));
+        }
+
+        private void Try(Action<IRegistryModifierService> calculate)
+        {
+            Try<object>(r =>
+            {
+                calculate(r);
+                return null;
+            });
+        }
+
+        private T Try<T>(Func<IRegistryModifierService, T> calculate)
+        {
+            try
+            {
+                return calculate(registryModifierService);
+            } 
+            catch(Exception)
+            {
+                // Continue
+            }
+            try
+            {
+                return calculate(externalRegistryModifierService);
+            }
+            catch (Exception)
+            {
+                // Continue
+            }
+            throw new Exception("Cannot perform registry action");
         }
     }
 }

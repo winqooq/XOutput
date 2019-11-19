@@ -9,13 +9,16 @@ namespace XOutput.UI.Component
     public class ControllerViewModel : ViewModelBase<ControllerModel>, IDisposable
     {
         private const int BackgroundDelayMS = 500;
-        private readonly Action<string> log;
+
+        private readonly NotificationService notificationService;
+
         private readonly DispatcherTimer timer = new DispatcherTimer();
         private readonly bool isAdmin;
 
-        public ControllerViewModel(ControllerModel model, GameController controller, bool isAdmin, Action<string> log) : base(model)
+        public ControllerViewModel(ControllerModel model, NotificationService notificationService, GameController controller, bool isAdmin) : base(model)
         {
-            this.log = log;
+            this.notificationService = notificationService;
+
             this.isAdmin = isAdmin;
             Model.Controller = controller;
             Model.ButtonText = "Start";
@@ -52,13 +55,13 @@ namespace XOutput.UI.Component
                 controllerCount = Model.Controller.Start(() =>
                 {
                     Model.ButtonText = "Start";
-                    log?.Invoke(string.Format(LanguageModel.Instance.Translate("EmulationStopped"), Model.Controller.DisplayName));
+                    notificationService.Add("EmulationStopped", new string[] { Model.Controller.DisplayName }, TimeSpan.FromSeconds(10));
                     Model.Started = false;
                 });
                 if (controllerCount != 0)
                 {
                     Model.ButtonText = "Stop";
-                    log?.Invoke(string.Format(LanguageModel.Instance.Translate("EmulationStarted"), Model.Controller.DisplayName, controllerCount));
+                    notificationService.Add("EmulationStarted", new string[] { Model.Controller.DisplayName, controllerCount.ToString() }, TimeSpan.FromSeconds(10));
                 }
                 Model.Started = controllerCount != 0;
             }

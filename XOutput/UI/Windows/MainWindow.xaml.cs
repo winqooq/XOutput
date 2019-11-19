@@ -36,7 +36,7 @@ namespace XOutput.UI.Windows
             InitializeComponent();
             Closed += WindowClosed;
             Closing += WindowClosing;
-            viewModel.Initialize(Log);
+            viewModel.Initialize();
             Dispatcher.Invoke(Initialize);
             logger.Info("The application has started.");
         }
@@ -51,22 +51,6 @@ namespace XOutput.UI.Windows
         private async Task Initialize()
         {
             await ViewModel.CompareVersion();
-        }
-
-        public void Log(string msg)
-        {
-            Dispatcher.BeginInvoke((Action)(() =>
-            {
-                try
-                {
-                    logBox.AppendText(msg + Environment.NewLine);
-                }
-                catch (Exception ex)
-                {
-                    logger.Error("Cannot log into the log box: " + msg + Environment.NewLine);
-                    logger.Error(ex);
-                }
-            }));
         }
 
         private void AddControllerClick(object sender, RoutedEventArgs e)
@@ -161,7 +145,6 @@ namespace XOutput.UI.Windows
         private void OpenFlyout(object sender, RoutedEventArgs e)
         {
             ViewModel.Model.IsOpen = true;
-            ViewModel.Model.Events.Add(new System.Windows.Controls.Label { Content = "test" });
         }
     }
 }

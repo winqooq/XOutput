@@ -19,11 +19,11 @@ namespace XOutput.UI.Windows
             InitializeComponent();
         }
 
-        public void Initialize(IInputDevice device, bool isAdmin)
+        public void Initialize(IInputDevice device)
         {
             this.device = device;
             device.Disconnected += Disconnected;
-            ViewModel.Initialize(device, isAdmin);
+            ViewModel.Initialize(device);
         }
 
         public override void CleanUp()

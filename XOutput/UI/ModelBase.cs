@@ -25,7 +25,7 @@ namespace XOutput.UI
             }
         }
 
-        protected bool Set<T>(T newValue, T currentValue, Action<T> setter, params string[] propertyNames)
+        protected bool Set<T>(T newValue, ref T currentValue, params string[] propertyNames)
         {
             if (cleanup)
             {
@@ -34,7 +34,7 @@ namespace XOutput.UI
             bool changed = false;
             if (!Equals(currentValue, newValue))
             {
-                setter(newValue);
+                currentValue = newValue;
                 OnPropertyChanged(propertyNames);
                 changed = true;
             }

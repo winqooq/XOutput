@@ -1,5 +1,6 @@
 ﻿using System.Windows.Media;
 using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
@@ -9,75 +10,46 @@ namespace XOutput.UI.Component
         public GameController Controller
         {
             get => controller;
-            set
-            {
-                if (controller != value)
-                {
-                    controller = value;
-                    OnPropertyChanged(nameof(Controller));
-                }
-            }
+            set { Set(value, ref controller, nameof(Controller)); }
         }
 
         private string buttonText;
         public string ButtonText
         {
             get => buttonText;
-            set
-            {
-                if (buttonText != value)
-                {
-                    buttonText = value;
-                    OnPropertyChanged(nameof(ButtonText));
-                }
-            }
+            set { Set(value, ref buttonText, nameof(ButtonText)); }
         }
         private bool started;
         public bool Started
         {
             get => started;
-            set
-            {
-                if (started != value)
-                {
-                    started = value;
-                    OnPropertyChanged(nameof(Started));
-                }
-            }
+            set { Set(value, ref started, nameof(Started)); }
         }
 
         private bool canStart;
         public bool CanStart
         {
             get => canStart;
-            set
-            {
-                if (canStart != value)
-                {
-                    canStart = value;
-                    OnPropertyChanged(nameof(CanStart));
-                }
-            }
+            set { Set(value, ref canStart, nameof(CanStart)); }
         }
 
         private Brush background;
         public Brush Background
         {
             get => background;
-            set
-            {
-                if (background != value)
-                {
-                    background = value;
-                    OnPropertyChanged(nameof(Background));
-                }
-            }
+            set { Set(value, ref background, nameof(Background)); }
         }
-        public string DisplayName { get { return Controller.ToString(); } }
+        public string DisplayName => Controller.ToString();
 
         public void RefreshName()
         {
             OnPropertyChanged(nameof(DisplayName));
+        }
+
+        [ResolverMethod]
+        public ControllerModel()
+        {
+
         }
     }
 }

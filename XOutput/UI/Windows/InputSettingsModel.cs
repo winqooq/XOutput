@@ -16,49 +16,49 @@ namespace XOutput.UI.Windows
         public string Title
         {
             get => title;
-            set { Set(value, title, v => title = v, nameof(Title)); }
+            set { Set(value, ref title, nameof(Title)); }
         }
 
         private string forceFeedbackText = "";
         public string ForceFeedbackText
         {
             get => forceFeedbackText;
-            set { Set(value, forceFeedbackText, v => forceFeedbackText = v, nameof(ForceFeedbackText)); }
+            set { Set(value, ref forceFeedbackText, nameof(ForceFeedbackText)); }
         }
 
         private string testButtonText = "";
         public string TestButtonText
         {
             get => testButtonText;
-            set { Set(value, testButtonText, v => testButtonText = v, nameof(TestButtonText)); }
+            set { Set(value, ref testButtonText, nameof(TestButtonText)); }
         }
 
         private bool forceFeedbackEnabled;
         public bool ForceFeedbackEnabled
         {
             get => forceFeedbackEnabled;
-            set { Set(value, forceFeedbackEnabled, v => forceFeedbackEnabled = v, nameof(ForceFeedbackEnabled)); }
+            set { Set(value, ref forceFeedbackEnabled, nameof(ForceFeedbackEnabled)); }
         }
 
         private bool forceFeedbackAvailable;
         public bool ForceFeedbackAvailable
         {
             get => forceFeedbackAvailable;
-            set { Set(value, forceFeedbackAvailable, v => forceFeedbackAvailable = v, nameof(ForceFeedbackAvailable)); }
+            set { Set(value, ref forceFeedbackAvailable, nameof(ForceFeedbackAvailable)); }
         }
 
-        private bool isAdmin;
-        public bool IsAdmin
+        private bool hidGuardianAvailable;
+        public bool HidGuardianAvailable
         {
-            get => isAdmin;
-            set { Set(value, isAdmin, v => isAdmin = v, nameof(IsAdmin)); }
+            get => hidGuardianAvailable;
+            set { Set(value, ref hidGuardianAvailable, nameof(HidGuardianAvailable)); }
         }
 
         private bool hidGuardianAdded;
         public bool HidGuardianAdded
         {
             get => hidGuardianAdded;
-            set { Set(value, hidGuardianAdded, v => hidGuardianAdded = v, nameof(HidGuardianAdded)); }
+            set { Set(value, ref hidGuardianAdded, nameof(HidGuardianAdded)); }
         }
 
         [ResolverMethod(Scope.Prototype)]

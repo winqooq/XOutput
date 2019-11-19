@@ -6,6 +6,7 @@
                xmlns:tb="http://www.hardcodet.net/taskbar"
                xmlns:UI="clr-namespace:XOutput.UI"
                xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+               xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                xmlns:local="clr-namespace:XOutput.UI.Windows"
                mc:Ignorable="d"
                x:TypeArguments="local:MainWindowViewModel,local:MainWindowModel"
@@ -13,9 +14,10 @@
                Title="XOutput" Width="700" Height="700">
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
-            <Controls:Flyout Header="Flyout" Position="Right" Width="400" Theme="Accent" IsOpen="{Binding Model.IsOpen, Mode=TwoWay}">
+            <Controls:Flyout Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Notifications'}"
+                             Position="Right" Width="400" Theme="Accent" IsOpen="{Binding Model.IsOpen, Mode=TwoWay}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <ItemsControl ItemsSource="{Binding Model.Events}"/>
+                    <ItemsControl ItemsSource="{Binding Model.Notifications}"/>
                 </ScrollViewer>
             </Controls:Flyout>
         </Controls:FlyoutsControl>
@@ -26,8 +28,6 @@
             <RowDefinition Height="2*"/>
             <RowDefinition Height="3"/>
             <RowDefinition Height="2*"/>
-            <RowDefinition Height="3"/>
-            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <tb:TaskbarIcon Visibility="Visible" ToolTipText="XOutput" IconSource="/Resources/icon.ico" MenuActivation="RightClick" PopupActivation="LeftClick"
@@ -46,21 +46,33 @@
                     </ItemsPanelTemplate>
                 </Menu.ItemsPanel>
                 <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='FileMenu'}">
-                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='GameControllersMenu'}" Click="GameControllersClick"/>
+                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='GameControllersMenu'}" Click="GameControllersClick">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconFontAwesome Kind="GamepadSolid" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <Separator/>
                     <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ExitMenu'}" Click="ExitClick"/>
                 </MenuItem>
                 <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='ToolsMenu'}">
-                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='SettingsMenu'}" Click="SettingsClick"/>
+                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='SettingsMenu'}" Click="SettingsClick">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconFontAwesome Kind="CogSolid" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='DiagnosticsMenu'}" Click="DiagnosticsClick"/>
                 </MenuItem>
                 <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HelpMenu'}">
-                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='AboutMenu'}" Click="AboutClick"/>
+                    <MenuItem Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='AboutMenu'}" Click="AboutClick">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconFontAwesome Kind="QuestionSolid" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
-                <MenuItem HorizontalAlignment="Right" Click="OpenFlyout" Margin="0,0,5,0">
+                <MenuItem HorizontalAlignment="Right" Click="OpenFlyout" Margin="0,0,5,0" ToolTip="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Notifications'}">
                     <MenuItem.Header>
                         <Controls:Badged Badge="{Binding Model.NotificationCount}" BadgePlacementMode="Right">
-                            <TextBlock Text="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Notifications'}" Margin="0,0,10,0"/>
+                            <iconPacks:PackIconFontAwesome Kind="BellRegular" Height="20" Margin="0,0,10,0"/>
                         </Controls:Badged>
                     </MenuItem.Header>
                 </MenuItem>
@@ -88,10 +100,6 @@
                     <ItemsControl ItemsSource="{Binding Model.Controllers}"/>
                 </ScrollViewer>
             </DockPanel>
-        </GroupBox>
-        <GridSplitter Grid.Row="4" Height="5" HorizontalAlignment="Stretch"/>
-        <GroupBox Grid.Row="5" Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Output'}">
-            <TextBox x:Name="logBox" TextWrapping="Wrap" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
         </GroupBox>
     </Grid>
 </UI:WindowBase>
