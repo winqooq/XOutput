@@ -12,11 +12,9 @@ namespace XOutput.UI.Component
     {
         private const int BackgroundDelayMS = 500;
         private readonly DispatcherTimer timer = new DispatcherTimer();
-        private readonly bool isAdmin;
 
-        public InputViewModel(InputModel model, IInputDevice device, bool isAdmin) : base(model)
+        public InputViewModel(InputModel model, IInputDevice device) : base(model)
         {
-            this.isAdmin = isAdmin;
             Model.Device = device;
             Model.Background = Brushes.White;
             Model.Device.InputChanged += InputDevice_InputChanged;

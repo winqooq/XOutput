@@ -14,7 +14,7 @@ namespace XOutput.UI.Windows
     {
         private readonly GameController controller;
 
-        public ControllerSettingsViewModel(ControllerSettingsModel model, GameController controller, bool isAdmin) : base(model)
+        public ControllerSettingsViewModel(ControllerSettingsModel model, GameController controller) : base(model)
         {
             this.controller = controller;
             Model.Title = controller.DisplayName;

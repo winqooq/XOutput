@@ -13,13 +13,11 @@ namespace XOutput.UI.Component
         private readonly NotificationService notificationService;
 
         private readonly DispatcherTimer timer = new DispatcherTimer();
-        private readonly bool isAdmin;
 
-        public ControllerViewModel(ControllerModel model, NotificationService notificationService, GameController controller, bool isAdmin) : base(model)
+        public ControllerViewModel(ControllerModel model, NotificationService notificationService, GameController controller) : base(model)
         {
             this.notificationService = notificationService;
 
-            this.isAdmin = isAdmin;
             Model.Controller = controller;
             Model.ButtonText = "Start";
             Model.Background = Brushes.White;
@@ -30,7 +28,7 @@ namespace XOutput.UI.Component
 
         public void Edit()
         {
-            var controllerSettingsWindow = new ControllerSettingsWindow(new ControllerSettingsViewModel(new ControllerSettingsModel(), Model.Controller, isAdmin), Model.Controller);
+            var controllerSettingsWindow = new ControllerSettingsWindow(new ControllerSettingsViewModel(new ControllerSettingsModel(), Model.Controller), Model.Controller);
             controllerSettingsWindow.ShowDialog();
             Model.RefreshName();
         }

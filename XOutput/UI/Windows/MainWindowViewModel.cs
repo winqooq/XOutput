@@ -39,10 +39,8 @@ namespace XOutput.UI.Windows
 
         private readonly DispatcherTimer timer = new DispatcherTimer();
         private readonly DirectInputDevices directInputDevices = new DirectInputDevices();
-        private Action<string> log;
         private GeneralSettings settings;
         private bool installed;
-        private bool isAdmin;
 
         [ResolverMethod(Scope.Prototype)]
         public MainWindowViewModel(MainWindowModel model, Dispatcher dispatcher, SettingsManager settingsManager, NotificationService notificationService,
@@ -104,13 +102,11 @@ namespace XOutput.UI.Windows
                 try
                 {
                     hidGuardianManager.ResetPid(pid);
-                    isAdmin = true;
                     logger.Info("HidGuardian registry is set");
                     notificationService.Add("HidGuardianEnabledSuccessfully", new string[] { pid.ToString() }, TimeSpan.FromSeconds(10));
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    isAdmin = false;
                     logger.Warning("Not running in elevated mode.");
                     notificationService.Add("HidGuardianNotAdmin");
                 }
@@ -151,11 +147,11 @@ namespace XOutput.UI.Windows
             logger.Debug("Creating keyboard controller");
             Devices.Input.Keyboard.Keyboard keyboard = new Devices.Input.Keyboard.Keyboard();
             InputDevices.Instance.Add(keyboard);
-            Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), keyboard, false)));
+            Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), keyboard)));
             logger.Debug("Creating mouse controller");
             Devices.Input.Mouse.Mouse mouse = new Devices.Input.Mouse.Mouse();
             InputDevices.Instance.Add(mouse);
-            Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), mouse, false)));
+            Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), mouse)));
             foreach (var mappingId in settingsManager.ListMappingSettingsIds())
             {
                 var mapping = settingsManager.LoadMappingConfig(mappingId);
@@ -242,7 +238,7 @@ namespace XOutput.UI.Windows
                     }
                     device.Disconnected -= DispatchRefreshGameControllers;
                     device.Disconnected += DispatchRefreshGameControllers;
-                    Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), device, isAdmin)));
+                    Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), device)));
                 }
             }
         }
@@ -252,7 +248,7 @@ namespace XOutput.UI.Windows
             var gameController = new GameController(mapper ?? new InputMapper(Guid.NewGuid().ToString()));
             Controllers.Instance.Add(gameController);
 
-            var controllerView = new ControllerView(new ControllerViewModel(new ControllerModel(), notificationService, gameController, isAdmin));
+            var controllerView = new ControllerView(new ControllerViewModel(new ControllerModel(), notificationService, gameController));
             controllerView.ViewModel.Model.CanStart = installed;
             controllerView.RemoveClicked += RemoveController;
             Model.Controllers.Add(controllerView);
