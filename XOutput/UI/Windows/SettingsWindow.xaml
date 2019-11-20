@@ -9,8 +9,6 @@
                      x:TypeArguments="local:SettingsViewModel,local:SettingsModel,local:SettingsResult"
                      Title="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='SettingsMenu'}"
                      Width="550" Height="240" MinWidth="460"
-                     BorderBrush="{DynamicResource AccentColorBrush}"
-                     BorderThickness="1"
                      d:DataContext="{d:DesignInstance Type=local:SettingsViewModel, IsDesignTimeCreatable=False}">
     <Grid Margin="10,10">
         <Grid.ColumnDefinitions>

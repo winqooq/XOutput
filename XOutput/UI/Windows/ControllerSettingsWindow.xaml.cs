@@ -21,7 +21,11 @@ namespace XOutput.UI.Windows
         public void Initialize(GameController controller)
         {
             this.controller = controller;
+            timer.Interval = TimeSpan.FromMilliseconds(10);
+            timer.Tick += TimerTick;
             ViewModel.Initialize(controller);
+            ViewModel.Update();
+            timer.Start();
         }
 
         public override void CleanUp()
@@ -29,14 +33,6 @@ namespace XOutput.UI.Windows
             timer.Tick -= TimerTick;
             timer.Stop();
             ViewModel.CleanUp();
-        }
-
-        private void WindowLoaded(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Update();
-            timer.Interval = TimeSpan.FromMilliseconds(10);
-            timer.Tick += TimerTick;
-            timer.Start();
         }
 
         private void TimerTick(object sender, EventArgs e)

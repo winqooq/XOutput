@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using System;
 using System.ComponentModel;
+using System.Windows;
 using XOutput.Logging;
 
 namespace XOutput.UI

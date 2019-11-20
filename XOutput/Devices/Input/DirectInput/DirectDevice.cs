@@ -184,13 +184,13 @@ namespace XOutput.Devices.Input.DirectInput
             }
             try
             {
-                logger.Info(joystick.Properties.InstanceName + " " + ToString());
-                logger.Info(PrettyPrint.ToString(joystick));
-                logger.Info(PrettyPrint.ToString(joystick.GetObjects()));
+                logger.Info(() => joystick.Properties.InstanceName + " " + ToString());
+                logger.Info(() => PrettyPrint.ToString(joystick));
+                logger.Debug(() => PrettyPrint.ToString(joystick.GetObjects()));
             } catch { }
             foreach (var obj in joystick.GetObjects())
             {
-                logger.Info("  " + obj.Name + " " + obj.ObjectId + " offset: " + obj.Offset + " objecttype: " + obj.ObjectType.ToString() + " " + obj.Usage);
+                logger.Debug(() => "  " + obj.Name + " " + obj.ObjectId + " offset: " + obj.Offset + " objecttype: " + obj.ObjectType.ToString() + " " + obj.Usage);
             }
             state = new DeviceState(sources, joystick.Capabilities.PovCount);
             deviceInputChangedEventArgs = new DeviceInputChangedEventArgs(this);

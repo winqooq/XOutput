@@ -67,7 +67,6 @@ namespace XOutput
                     ApplicationContext.Global.Resolve<Devices.Input.Mouse.MouseHook>().StartHook();
                 } catch (Exception ex) {
                     logger.Error(ex);
-                    MessageBox.Show(ex.ToString());
                     Application.Current.Shutdown();
                 }
             }
