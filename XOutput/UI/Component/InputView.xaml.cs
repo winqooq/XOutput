@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
@@ -10,6 +11,7 @@ namespace XOutput.UI.Component
     {
         public InputViewModel ViewModel { get; private set; }
 
+        [ResolverMethod(Scope.Prototype)]
         public InputView(InputViewModel viewModel)
         {
             ViewModel = viewModel;

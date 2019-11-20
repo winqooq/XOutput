@@ -92,7 +92,7 @@
             <Button Width="100" Margin="10 0" Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Close'}"
                     Click="CloseClick"/>
             <Button Width="100" Margin="10 0" Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Save'}"
-                    Click="SaveClick" IsEnabled="{Binding Model.Changed}"/>
+                    Click="SaveClick"/>
         </StackPanel>
     </Grid>
 </UI:WindowBase>

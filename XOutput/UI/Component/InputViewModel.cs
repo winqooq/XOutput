@@ -8,18 +8,31 @@ using XOutput.UI.Windows;
 
 namespace XOutput.UI.Component
 {
-    public class InputViewModel : ViewModelBase<InputModel>, IDisposable
+    public class InputViewModel : ViewModelBase<InputModel>
     {
         private const int BackgroundDelayMS = 500;
         private readonly DispatcherTimer timer = new DispatcherTimer();
 
-        public InputViewModel(InputModel model, IInputDevice device) : base(model)
+        [ResolverMethod(Scope.Prototype)]
+        public InputViewModel(InputModel model) : base(model)
         {
-            Model.Device = device;
             Model.Background = Brushes.White;
-            Model.Device.InputChanged += InputDevice_InputChanged;
             timer.Interval = TimeSpan.FromMilliseconds(BackgroundDelayMS);
             timer.Tick += Timer_Tick;
+        }
+
+        public void Initialize(IInputDevice device)
+        {
+            Model.Device = device;
+            Model.DisplayName = string.Format("{0} ({1})", device.DisplayName, device.UniqueId);
+            Model.Device.InputChanged += InputDevice_InputChanged;
+        }
+
+        public override void CleanUp()
+        {
+            timer.Tick -= Timer_Tick;
+            Model.Device.InputChanged -= InputDevice_InputChanged;
+            base.CleanUp();
         }
 
         public void Edit()
@@ -27,12 +40,6 @@ namespace XOutput.UI.Component
             var controllerSettingsWindow = ApplicationContext.Global.Resolve<InputSettingsWindow>();
             controllerSettingsWindow.Initialize(Model.Device);
             controllerSettingsWindow.ShowAndWait();
-        }
-
-        public void Dispose()
-        {
-            timer.Tick -= Timer_Tick;
-            Model.Device.InputChanged -= InputDevice_InputChanged;
         }
 
         private void Timer_Tick(object sender, EventArgs e)

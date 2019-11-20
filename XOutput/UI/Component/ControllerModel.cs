@@ -6,13 +6,6 @@ namespace XOutput.UI.Component
 {
     public class ControllerModel : ModelBase
     {
-        private GameController controller;
-        public GameController Controller
-        {
-            get => controller;
-            set { Set(value, ref controller, nameof(Controller)); }
-        }
-
         private string buttonText;
         public string ButtonText
         {
@@ -39,14 +32,15 @@ namespace XOutput.UI.Component
             get => background;
             set { Set(value, ref background, nameof(Background)); }
         }
-        public string DisplayName => Controller.ToString();
 
-        public void RefreshName()
+        private string displayName;
+        public string DisplayName
         {
-            OnPropertyChanged(nameof(DisplayName));
+            get => displayName;
+            set { Set(value, ref displayName, nameof(DisplayName)); }
         }
 
-        [ResolverMethod]
+        [ResolverMethod(Scope.Prototype)]
         public ControllerModel()
         {
 

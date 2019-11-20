@@ -20,7 +20,7 @@ using XOutput.Versioning;
 
 namespace XOutput.UI.Windows
 {
-    public class MainWindowViewModel : ViewModelBase<MainWindowModel>, IDisposable
+    public class MainWindowViewModel : ViewModelBase<MainWindowModel>
     {
 
         private readonly int pid = Process.GetCurrentProcess().Id;
@@ -41,6 +41,7 @@ namespace XOutput.UI.Windows
         private readonly DirectInputDevices directInputDevices = new DirectInputDevices();
         private GeneralSettings settings;
         private bool installed;
+        private readonly Dictionary<ControllerView, GameController> controllerMap = new Dictionary<ControllerView, GameController>();
 
         [ResolverMethod(Scope.Prototype)]
         public MainWindowViewModel(MainWindowModel model, Dispatcher dispatcher, SettingsManager settingsManager, NotificationService notificationService,
@@ -55,32 +56,28 @@ namespace XOutput.UI.Windows
             this.commandRunner = commandRunner;
 
             timer.Interval = TimeSpan.FromMilliseconds(10000);
-            timer.Tick += (object sender1, EventArgs e1) => { RefreshGameControllers(); };
+            timer.Tick += Timer_Tick;
             timer.Start();
-            notificationService.NotificationAdded += NotificationAdded; 
+            notificationService.NotificationAdded += NotificationAdded;
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        { 
+             RefreshGameControllers();
         }
 
         public override void CleanUp()
         {
+            timer.Tick -= Timer_Tick;
             timer.Stop();
+            directInputDevices.Dispose();
+            InputDevices.Instance.Dispose();
+            Controllers.Instance.Dispose();
             foreach (var notification in Model.Notifications)
             {
                 notification.CloseRequested -= NotificationCloseRequested;
             }
             base.CleanUp();
-        }
-
-        public void Dispose()
-        {
-            foreach (var device in Model.Inputs.Select(x => x.ViewModel.Model.Device))
-            {
-                device.Dispose();
-            }
-            foreach (var controller in Model.Controllers.Select(x => x.ViewModel.Model.Controller))
-            {
-                controller.Dispose();
-            }
-            directInputDevices.Dispose();
         }
 
         public void Initialize()
@@ -147,11 +144,15 @@ namespace XOutput.UI.Windows
             logger.Debug("Creating keyboard controller");
             Devices.Input.Keyboard.Keyboard keyboard = new Devices.Input.Keyboard.Keyboard();
             InputDevices.Instance.Add(keyboard);
-            Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), keyboard)));
+            InputView keyboardInputView = ApplicationContext.Global.Resolve<InputView>();
+            keyboardInputView.ViewModel.Initialize(keyboard);
+            Model.Inputs.Add(keyboardInputView);
             logger.Debug("Creating mouse controller");
             Devices.Input.Mouse.Mouse mouse = new Devices.Input.Mouse.Mouse();
             InputDevices.Instance.Add(mouse);
-            Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), mouse)));
+            InputView mouseInputView = ApplicationContext.Global.Resolve<InputView>();
+            mouseInputView.ViewModel.Initialize(mouse);
+            Model.Inputs.Add(mouseInputView);
             foreach (var mappingId in settingsManager.ListMappingSettingsIds())
             {
                 var mapping = settingsManager.LoadMappingConfig(mappingId);
@@ -162,17 +163,23 @@ namespace XOutput.UI.Windows
 
         private void NotificationAdded(NotificationData data)
         {
-            var notificationView = ApplicationContext.Global.Resolve<NotificationView>();
-            notificationView.SetNotificationData(data);
-            Model.Notifications.Add(notificationView);
-            notificationView.CloseRequested += NotificationCloseRequested;
-            Model.NotificationCount = Model.Notifications.Count;
+            if (!dispatcher.HasShutdownStarted)
+            {
+                dispatcher.Invoke(() =>
+                {
+                    var notificationView = ApplicationContext.Global.Resolve<NotificationView>();
+                    notificationView.SetNotificationData(data);
+                    Model.Notifications.Add(notificationView);
+                    notificationView.CloseRequested += NotificationCloseRequested;
+                    Model.NotificationCount = Model.Notifications.Count;
+                });
+            }
         }
 
         private void NotificationCloseRequested(NotificationView view)
         {
             view.CloseRequested -= NotificationCloseRequested;
-            Model.Notifications.Remove(view);
+            Model.Notifications.RemoveView(view);
             Model.NotificationCount = Model.Notifications.Count;
         }
 
@@ -192,18 +199,18 @@ namespace XOutput.UI.Windows
             switch (result)
             {
                 case VersionCompare.Error:
-                    await logger.Warning("Failed to check latest version");
+                    logger.Warning("Failed to check latest version");
                     notificationService.Add("VersionCheckError", true);
                     break;
                 case VersionCompare.NeedsUpgrade:
-                    await logger.Info("New version is available");
+                    logger.Info("New version is available");
                     notificationService.Add("VersionCheckNeedsUpgrade", true);
                     break;
                 case VersionCompare.NewRelease:
                     notificationService.Add("VersionCheckNewRelease", TimeSpan.FromSeconds(10), true);
                     break;
                 case VersionCompare.UpToDate:
-                    await logger.Info("Version is up-to-date");
+                    logger.Info("Version is up-to-date");
                     notificationService.Add("VersionCheckUpToDate", TimeSpan.FromSeconds(10));
                     break;
                 default:
@@ -220,9 +227,8 @@ namespace XOutput.UI.Windows
                 var device = inputView.ViewModel.Model.Device;
                 if (device is DirectDevice && (!instances.Any(x => x.InstanceGuid == ((DirectDevice)device).Id) || !device.Connected))
                 {
-                    Model.Inputs.Remove(inputView);
+                    Model.Inputs.RemoveView(inputView);
                     InputDevices.Instance.Remove(device);
-                    inputView.ViewModel.Dispose();
                     device.Dispose();
                 }
             }
@@ -231,14 +237,17 @@ namespace XOutput.UI.Windows
                 if (!Model.Inputs.Select(c => c.ViewModel.Model.Device).OfType<DirectDevice>().Any(d => d.Id == instance.InstanceGuid))
                 {
                     var device = directInputDevices.CreateDirectDevice(instance);
-                    device.InputConfiguration = settingsManager.LoadInputConfig(device.UniqueId);
                     if (device == null)
                     {
                         continue;
                     }
+                    device.InputConfiguration = settingsManager.LoadInputConfig(device.UniqueId);
                     device.Disconnected -= DispatchRefreshGameControllers;
                     device.Disconnected += DispatchRefreshGameControllers;
-                    Model.Inputs.Add(new InputView(new InputViewModel(new InputModel(), device)));
+
+                    InputView inputView = ApplicationContext.Global.Resolve<InputView>();
+                    inputView.ViewModel.Initialize(device);
+                    Model.Inputs.Add(inputView);
                 }
             }
         }
@@ -248,8 +257,8 @@ namespace XOutput.UI.Windows
             var gameController = new GameController(mapper ?? new InputMapper(Guid.NewGuid().ToString()));
             Controllers.Instance.Add(gameController);
 
-            var controllerView = new ControllerView(new ControllerViewModel(new ControllerModel(), notificationService, gameController));
-            controllerView.ViewModel.Model.CanStart = installed;
+            ControllerView controllerView = ApplicationContext.Global.Resolve<ControllerView>();
+            controllerView.Initialize(gameController, installed);
             controllerView.RemoveClicked += RemoveController;
             Model.Controllers.Add(controllerView);
             notificationService.Add("ControllerConnected", new string[] { gameController.DisplayName }, TimeSpan.FromSeconds(10));
@@ -260,15 +269,13 @@ namespace XOutput.UI.Windows
             }
         }
 
-        public void RemoveController(ControllerView controllerView)
+        public void RemoveController(ControllerView controllerView, GameController controller)
         {
-            var controller = controllerView.ViewModel.Model.Controller;
-            controllerView.ViewModel.Dispose();
-            controller.Dispose();
-            Model.Controllers.Remove(controllerView);
+            Model.Controllers.RemoveView(controllerView);
             logger.Info($"{controller.ToString()} is disconnected.");
             notificationService.Add("ControllerDisconnected", new string[] { controller.DisplayName }, TimeSpan.FromSeconds(5));
             Controllers.Instance.Remove(controller);
+            controller.Dispose();
             settingsManager.DeleteMappingSettings(controller.Mapper);
         }
 
@@ -303,10 +310,13 @@ namespace XOutput.UI.Windows
 
         private void DispatchRefreshGameControllers(object sender, DeviceDisconnectedEventArgs e)
         {
-            Thread delayThread = new Thread(() =>
+            Thread delayThread = new Thread(async () =>
             {
-                Thread.Sleep(1000);
-                dispatcher.Invoke(RefreshGameControllers);
+                await Task.Delay(1000);
+                if (!dispatcher.HasShutdownStarted)
+                {
+                    dispatcher.Invoke(RefreshGameControllers);
+                }
             })
             {
                 Name = "Device list refresh delay",

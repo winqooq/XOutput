@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
@@ -9,14 +11,23 @@ namespace XOutput.UI.Component
     /// </summary>
     public partial class ControllerView : UserControl, IViewBase<ControllerViewModel, ControllerModel>
     {
-        public event Action<ControllerView> RemoveClicked;
+        public event Action<ControllerView, GameController> RemoveClicked;
         public ControllerViewModel ViewModel { get; private set; }
 
+        private GameController controller;
+
+        [ResolverMethod(Scope.Prototype)]
         public ControllerView(ControllerViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = viewModel;
             InitializeComponent();
+        }
+
+        public void Initialize(GameController controller, bool canStart)
+        {
+            this.controller = controller;
+            ViewModel.Initialize(controller, canStart);
         }
 
         public void CleanUp()
@@ -36,7 +47,7 @@ namespace XOutput.UI.Component
 
         private void RemoveClick(object sender, RoutedEventArgs e)
         {
-            RemoveClicked?.Invoke(this);
+            RemoveClicked?.Invoke(this, this.controller);
         }
     }
 }

@@ -5,8 +5,7 @@ namespace XOutput.UI.Windows
 {
     public class SettingsModel : ModelBase
     {
-        private readonly ObservableCollection<string> languages = new ObservableCollection<string>();
-        public ObservableCollection<string> Languages => languages;
+        public ObservableCollection<string> Languages { get; private set; }
 
         private string selectedLanguage;
         public string SelectedLanguage
@@ -53,7 +52,7 @@ namespace XOutput.UI.Windows
         [ResolverMethod(Scope.Prototype)]
         public SettingsModel()
         {
-
+            Languages = new ObservableCollection<string>();
         }
 
         public override void CleanUp()

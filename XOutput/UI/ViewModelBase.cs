@@ -2,7 +2,7 @@
 
 namespace XOutput.UI
 {
-    public abstract class ViewModelBase<M> where M : ModelBase, INotifyPropertyChanged
+    public abstract class ViewModelBase<M> : ICleanUp where M : ModelBase
     {
         public LanguageModel LanguageModel => LanguageModel.Instance;
         public M Model { get; private set; }

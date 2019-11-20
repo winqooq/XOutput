@@ -90,11 +90,6 @@ namespace XOutput.Devices
             }
         }
 
-        ~GameController()
-        {
-            Dispose();
-        }
-
         /// <summary>
         /// Disposes all used resources
         /// </summary>
@@ -164,6 +159,7 @@ namespace XOutput.Devices
                 logger.Info($"Emulation stopped on {ToString()}.");
                 resetId();
                 thread?.Interrupt();
+                thread?.Join();
             }
         }
 
@@ -184,12 +180,16 @@ namespace XOutput.Devices
             }
             catch (ThreadInterruptedException)
             {
-
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Failed to read from device", ex);
+                Stop();
             }
             finally
             {
                 onStop?.Invoke();
-                Stop();
             }
         }
 

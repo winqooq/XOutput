@@ -205,11 +205,6 @@ namespace XOutput.Devices.Input.DirectInput
             inputRefresher.Start();
         }
 
-        ~DirectDevice()
-        {
-            Dispose();
-        }
-
         /// <summary>
         /// Disposes all resources.
         /// </summary>
@@ -219,6 +214,7 @@ namespace XOutput.Devices.Input.DirectInput
             {
                 disposed = true;
                 inputRefresher?.Interrupt();
+                inputRefresher?.Join();
                 foreach (var actuator in actuators)
                 {
                     actuator.Dispose();
@@ -249,7 +245,7 @@ namespace XOutput.Devices.Input.DirectInput
             }
             catch (ThreadInterruptedException)
             {
-                // Thread has been interrupted
+                throw;
             }
         }
 

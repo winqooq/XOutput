@@ -73,10 +73,10 @@ namespace XOutput.UI.Windows
         public override void CleanUp()
         {
             base.CleanUp();
-            InputAxisViews.Clear();
-            InputSliderViews.Clear();
-            InputDPadViews.Clear();
-            InputButtonViews.Clear();
+            InputAxisViews.ClearView();
+            InputSliderViews.ClearView();
+            InputDPadViews.ClearView();
+            InputButtonViews.ClearView();
         }
 
         public void RefreshVisiblity()

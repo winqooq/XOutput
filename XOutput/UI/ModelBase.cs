@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reflection;
+using System.Windows;
+using XOutput.Logging;
 
 namespace XOutput.UI
 {
-    public abstract class ModelBase : INotifyPropertyChanged
+    public abstract class ModelBase : INotifyPropertyChanged, ICleanUp
     {
         public event PropertyChangedEventHandler PropertyChanged;
         private bool cleanup = false;
@@ -44,6 +47,44 @@ namespace XOutput.UI
         public virtual void CleanUp()
         {
             cleanup = true;
+        }
+    }
+
+    public static class CollectionHelper
+    {
+        private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(CollectionHelper));
+
+        public static void RemoveView<T>(this ObservableCollection<T> collection, params T[] values) where T : ICleanUp
+        {
+            foreach (var value in values)
+            {
+                if (collection.Remove(value))
+                {
+                    try
+                    {
+                        value.CleanUp();
+                    }
+                    catch(Exception ex)
+                    {
+                        logger.Error("Error while cleanup view", ex);
+                    }
+                }
+            }
+        }
+        public static void ClearView<T>(this ObservableCollection<T> collection) where T : ICleanUp
+        {
+            foreach (var value in collection)
+            {
+                try
+                {
+                    value.CleanUp();
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Error while cleanup view", ex);
+                }
+            }
+            collection.Clear();
         }
     }
 }

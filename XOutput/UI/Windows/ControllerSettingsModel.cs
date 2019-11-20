@@ -1,68 +1,65 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using XOutput.Tools;
 using XOutput.UI.Component;
 
 namespace XOutput.UI.Windows
 {
     public class ControllerSettingsModel : ModelBase
     {
-        private readonly ObservableCollection<MappingView> mapperAxisViews = new ObservableCollection<MappingView>();
-        public ObservableCollection<MappingView> MapperAxisViews => mapperAxisViews;
-        private readonly ObservableCollection<MappingView> mapperDPadViews = new ObservableCollection<MappingView>();
-        public ObservableCollection<MappingView> MapperDPadViews => mapperDPadViews;
-        private readonly ObservableCollection<MappingView> mapperButtonViews = new ObservableCollection<MappingView>();
-        public ObservableCollection<MappingView> MapperButtonViews => mapperButtonViews;
+        public ObservableCollection<MappingView> MapperAxisViews { get; private set; }
+        public ObservableCollection<MappingView> MapperDPadViews { get; private set; }
+        public ObservableCollection<MappingView> MapperButtonViews { get; private set; }
 
-        private readonly ObservableCollection<IUpdatableView> xInputAxisViews = new ObservableCollection<IUpdatableView>();
-        public ObservableCollection<IUpdatableView> XInputAxisViews => xInputAxisViews;
-        private readonly ObservableCollection<IUpdatableView> xInputDPadViews = new ObservableCollection<IUpdatableView>();
-        public ObservableCollection<IUpdatableView> XInputDPadViews => xInputDPadViews;
-        private readonly ObservableCollection<IUpdatableView> xInputButtonViews = new ObservableCollection<IUpdatableView>();
-        public ObservableCollection<IUpdatableView> XInputButtonViews => xInputButtonViews;
+        public ObservableCollection<IUpdatableView> XInputAxisViews { get; private set; }
+        public ObservableCollection<IUpdatableView> XInputDPadViews { get; private set; }
+        public ObservableCollection<IUpdatableView> XInputButtonViews { get; private set; }
 
-        private readonly ObservableCollection<ComboBoxItem> forceFeedbacks = new ObservableCollection<ComboBoxItem>();
-        public ObservableCollection<ComboBoxItem> ForceFeedbacks => forceFeedbacks;
+        public ObservableCollection<ComboBoxItem> ForceFeedbacks { get; private set; }
 
         private ComboBoxItem forceFeedback;
         public ComboBoxItem ForceFeedback
         {
             get => forceFeedback;
-            set
-            {
-                if (forceFeedback != value)
-                {
-                    forceFeedback = value;
-                    OnPropertyChanged(nameof(ForceFeedback));
-                }
-            }
+            set { Set(value, ref forceFeedback, nameof(ForceFeedback)); }
         }
 
-        private string title;
+        private string title = "";
         public string Title
         {
             get => title;
-            set
-            {
-                if (title != value)
-                {
-                    title = value;
-                    OnPropertyChanged(nameof(Title));
-                }
-            }
+            set { Set(value, ref title, nameof(Title)); }
         }
 
         private bool startWhenConnected;
         public bool StartWhenConnected
         {
             get => startWhenConnected;
-            set
-            {
-                if (startWhenConnected != value)
-                {
-                    startWhenConnected = value;
-                    OnPropertyChanged(nameof(StartWhenConnected));
-                }
-            }
+            set { Set(value, ref startWhenConnected, nameof(StartWhenConnected)); }
+        }
+
+        [ResolverMethod(Scope.Prototype)]
+        public ControllerSettingsModel()
+        {
+            XInputAxisViews = new ObservableCollection<IUpdatableView>();
+            XInputButtonViews = new ObservableCollection<IUpdatableView>();
+            XInputDPadViews = new ObservableCollection<IUpdatableView>();
+            MapperAxisViews = new ObservableCollection<MappingView>();
+            MapperButtonViews = new ObservableCollection<MappingView>();
+            MapperDPadViews = new ObservableCollection<MappingView>();
+            ForceFeedbacks = new ObservableCollection<ComboBoxItem>();
+        }
+
+        public override void CleanUp()
+        {
+            base.CleanUp();
+            XInputAxisViews.ClearView();
+            XInputButtonViews.ClearView();
+            XInputDPadViews.ClearView();
+            MapperAxisViews.ClearView();
+            MapperButtonViews.ClearView();
+            MapperDPadViews.ClearView();
+            ForceFeedbacks.Clear();
         }
     }
 }

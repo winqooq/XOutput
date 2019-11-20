@@ -3,28 +3,31 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Windows
 {
-    /// <summary>
-    /// Interaction logic for ControllerSettings.xaml
-    /// </summary>
-    public partial class ControllerSettingsWindow : Window, IViewBase<ControllerSettingsViewModel, ControllerSettingsModel>
+    public partial class ControllerSettingsWindow : WindowBase<ControllerSettingsViewModel, ControllerSettingsModel>
     {
         private readonly DispatcherTimer timer = new DispatcherTimer();
-        public ControllerSettingsViewModel ViewModel { get; private set; }
-        private readonly GameController controller;
+        private GameController controller;
 
-        public ControllerSettingsWindow(ControllerSettingsViewModel viewModel, GameController controller)
+        [ResolverMethod(Scope.Prototype)]
+        public ControllerSettingsWindow(ControllerSettingsViewModel viewModel) : base(viewModel)
         {
-            this.controller = controller;
-            ViewModel = viewModel;
-            DataContext = viewModel;
             InitializeComponent();
         }
 
-        public void CleanUp()
+        public void Initialize(GameController controller)
         {
+            this.controller = controller;
+            ViewModel.Initialize(controller);
+        }
+
+        public override void CleanUp()
+        {
+            timer.Tick -= TimerTick;
+            timer.Stop();
             ViewModel.CleanUp();
         }
 
@@ -39,14 +42,6 @@ namespace XOutput.UI.Windows
         private void TimerTick(object sender, EventArgs e)
         {
             ViewModel.Update();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            timer.Tick -= TimerTick;
-            timer.Stop();
-            ViewModel.Dispose();
-            base.OnClosed(e);
         }
 
         private void ConfigureAllButtonClick(object sender, RoutedEventArgs e)

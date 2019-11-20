@@ -110,8 +110,7 @@ namespace XOutput.UI.Windows
 
         private async void WindowClosed(object sender, EventArgs e)
         {
-            ViewModel.Dispose();
-            await logger.Info("The application will exit.");
+            logger.Info("The application will exit.");
         }
 
         private void TaskbarIconTrayMouseDoubleClick(object sender, RoutedEventArgs e)

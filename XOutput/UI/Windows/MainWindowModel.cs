@@ -40,9 +40,9 @@ namespace XOutput.UI.Windows
         public override void CleanUp()
         {
             base.CleanUp();
-            Notifications.Clear();
-            Inputs.Clear();
-            Controllers.Clear();
+            Notifications.ClearView();
+            Inputs.ClearView();
+            Controllers.ClearView();
         }
     }
 }

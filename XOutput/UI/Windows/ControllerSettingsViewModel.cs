@@ -6,17 +6,24 @@ using XOutput.Devices;
 using XOutput.Devices.Input;
 using XOutput.Devices.Input.DirectInput;
 using XOutput.Devices.XInput;
+using XOutput.Tools;
 using XOutput.UI.Component;
 
 namespace XOutput.UI.Windows
 {
-    public class ControllerSettingsViewModel : ViewModelBase<ControllerSettingsModel>, IDisposable
+    public class ControllerSettingsViewModel : ViewModelBase<ControllerSettingsModel>
     {
-        private readonly GameController controller;
+        private GameController controller;
 
-        public ControllerSettingsViewModel(ControllerSettingsModel model, GameController controller) : base(model)
+        [ResolverMethod(Scope.Prototype)]
+        public ControllerSettingsViewModel(ControllerSettingsModel model) : base(model)
         {
-            this.controller = controller;
+
+        }
+
+        public void Initialize(GameController gameController)
+        {
+            controller = gameController;
             Model.Title = controller.DisplayName;
             CreateMappingControls();
             CreateXInputControls();
@@ -69,16 +76,6 @@ namespace XOutput.UI.Windows
         public void SetStartWhenConnected()
         {
             controller.Mapper.StartWhenConnected = Model.StartWhenConnected;
-        }
-
-        public void Dispose()
-        {
-            Model.XInputAxisViews.Clear();
-            Model.XInputButtonViews.Clear();
-            Model.XInputDPadViews.Clear();
-            Model.MapperAxisViews.Clear();
-            Model.MapperButtonViews.Clear();
-            Model.MapperDPadViews.Clear();
         }
 
         private void CreateMappingControls()

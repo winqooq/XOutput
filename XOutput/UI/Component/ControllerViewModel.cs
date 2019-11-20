@@ -2,35 +2,52 @@
 using System.Windows.Media;
 using System.Windows.Threading;
 using XOutput.Devices;
+using XOutput.Tools;
 using XOutput.UI.Windows;
 
 namespace XOutput.UI.Component
 {
-    public class ControllerViewModel : ViewModelBase<ControllerModel>, IDisposable
+    public class ControllerViewModel : ViewModelBase<ControllerModel>
     {
         private const int BackgroundDelayMS = 500;
 
         private readonly NotificationService notificationService;
 
         private readonly DispatcherTimer timer = new DispatcherTimer();
+        private GameController controller;
 
-        public ControllerViewModel(ControllerModel model, NotificationService notificationService, GameController controller) : base(model)
+        [ResolverMethod(Scope.Prototype)]
+        public ControllerViewModel(ControllerModel model, NotificationService notificationService) : base(model)
         {
             this.notificationService = notificationService;
 
-            Model.Controller = controller;
             Model.ButtonText = "Start";
             Model.Background = Brushes.White;
-            Model.Controller.XInput.InputChanged += InputDevice_InputChanged;
             timer.Interval = TimeSpan.FromMilliseconds(BackgroundDelayMS);
             timer.Tick += Timer_Tick;
         }
 
+        public void Initialize(GameController controller, bool canStart)
+        {
+            this.controller = controller;
+            Model.CanStart = canStart;
+            Model.DisplayName = controller.DisplayName;
+            controller.XInput.InputChanged += InputDevice_InputChanged;
+        }
+
+        public override void CleanUp()
+        {
+            timer.Tick -= Timer_Tick;
+            controller.XInput.InputChanged -= InputDevice_InputChanged;
+            base.CleanUp();
+        }
+
         public void Edit()
         {
-            var controllerSettingsWindow = new ControllerSettingsWindow(new ControllerSettingsViewModel(new ControllerSettingsModel(), Model.Controller), Model.Controller);
-            controllerSettingsWindow.ShowDialog();
-            Model.RefreshName();
+            var window = ApplicationContext.Global.Resolve<ControllerSettingsWindow>();
+            window.Initialize(controller);
+            window.ShowAndWait();
+            Model.DisplayName = controller.DisplayName;
         }
 
         public void StartStop()
@@ -41,7 +58,7 @@ namespace XOutput.UI.Component
             }
             else
             {
-                Model.Controller.Stop();
+                controller.Stop();
             }
         }
 
@@ -50,25 +67,19 @@ namespace XOutput.UI.Component
             if (!Model.Started)
             {
                 int controllerCount = 0;
-                controllerCount = Model.Controller.Start(() =>
+                controllerCount = controller.Start(() =>
                 {
                     Model.ButtonText = "Start";
-                    notificationService.Add("EmulationStopped", new string[] { Model.Controller.DisplayName }, TimeSpan.FromSeconds(10));
+                    notificationService.Add("EmulationStopped", new string[] { controller.DisplayName }, TimeSpan.FromSeconds(10));
                     Model.Started = false;
                 });
                 if (controllerCount != 0)
                 {
                     Model.ButtonText = "Stop";
-                    notificationService.Add("EmulationStarted", new string[] { Model.Controller.DisplayName, controllerCount.ToString() }, TimeSpan.FromSeconds(10));
+                    notificationService.Add("EmulationStarted", new string[] { controller.DisplayName, controllerCount.ToString() }, TimeSpan.FromSeconds(10));
                 }
                 Model.Started = controllerCount != 0;
             }
-        }
-
-        public void Dispose()
-        {
-            timer.Tick -= Timer_Tick;
-            Model.Controller.XInput.InputChanged -= InputDevice_InputChanged;
         }
 
         private void Timer_Tick(object sender, EventArgs e)
