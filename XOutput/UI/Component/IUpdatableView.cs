@@ -2,7 +2,7 @@
 
 namespace XOutput.UI.Component
 {
-    public interface IUpdatableView : ICleanUp
+    public interface IUpdatableView : IViewBase
     {
         /// <summary>
         /// Updates the view from a device.

@@ -125,7 +125,9 @@ namespace XOutput.UI.Windows
             }
             foreach (var sliderInput in device.Sources.Where(s => s.Type == InputSourceTypes.Slider))
             {
-                Model.InputSliderViews.Add(new AxisView(new AxisViewModel(new AxisModel(), sliderInput)));
+                var axisView = ApplicationContext.Global.Resolve<AxisView>();
+                axisView.ViewModel.Initialize(sliderInput);
+                Model.InputSliderViews.Add(axisView);
             }
             foreach (var dPadInput in Enumerable.Range(0, device.DPads.Count()))
             {
@@ -185,7 +187,9 @@ namespace XOutput.UI.Windows
             {
                 if (axes.Contains(z))
                 {
-                    Model.InputAxisViews.Add(new AxisView(new AxisViewModel(new AxisModel(), z)));
+                    var axisView = ApplicationContext.Global.Resolve<AxisView>();
+                    axisView.ViewModel.Initialize(z);
+                    Model.InputAxisViews.Add(axisView);
                 }
             }
         }

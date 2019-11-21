@@ -1,15 +1,23 @@
 ﻿using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
     public class Axis2DViewModel : ViewModelBase<Axis2DModel>
     {
-        public Axis2DViewModel(Axis2DModel model, InputSource typex, InputSource typey, int maxx = 42, int maxy = 42) : base(model)
+        private const int maxx = 42;
+        private const int maxy = 42;
+        [ResolverMethod(Scope.Prototype)]
+        public Axis2DViewModel(Axis2DModel model) : base(model)
+        {
+            Model.MaxX = maxx;
+            Model.MaxY = maxy;
+        }
+
+        public void Initialize(InputSource typex, InputSource typey)
         {
             Model.TypeX = typex;
-            Model.MaxX = maxx;
             Model.TypeY = typey;
-            Model.MaxY = maxy;
         }
 
         public void UpdateValues(IDevice device)

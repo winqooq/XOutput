@@ -289,7 +289,7 @@ namespace XOutput.UI.Windows
         public void OpenSettings()
         {
             SettingsWindow settingsWindow = ApplicationContext.Global.Resolve<SettingsWindow>();
-            SettingsResult result = settingsWindow.ShowAndWaitResult();
+            SettingsResult result = settingsWindow.ShowAndWaitResult(new SettingsContext());
         }
 
         public void OpenDiagnostics()

@@ -6,7 +6,7 @@ using XOutput.Tools;
 
 namespace XOutput.UI.Windows
 {
-    public partial class InputSettingsWindow : WindowBase<InputSettingsViewModel, InputSettingsModel>
+    public partial class InputSettingsWindow : WindowBase<InputSettingsViewModel, InputSettingsModel, InputSettingsContext>
     {
         private readonly SettingsManager settingsManager;
 
@@ -19,9 +19,9 @@ namespace XOutput.UI.Windows
             InitializeComponent();
         }
 
-        public void Initialize(IInputDevice device)
+        public override void Initialize(InputSettingsContext context)
         {
-            this.device = device;
+            device = context.InputDevice;
             device.Disconnected += Disconnected;
             ViewModel.Initialize(device);
         }

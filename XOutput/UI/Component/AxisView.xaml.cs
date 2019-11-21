@@ -1,25 +1,20 @@
 ﻿using System.Windows.Controls;
 using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
-    /// <summary>
-    /// Interaction logic for AxisView.xaml
-    /// </summary>
-    public partial class AxisView : UserControl, IUpdatableView, IViewBase<AxisViewModel, AxisModel>
+    public partial class AxisView : ComponentBase<AxisViewModel, AxisModel, AxisContext>, IUpdatableView
     {
-        public AxisViewModel ViewModel { get; private set; }
-
-        public AxisView(AxisViewModel viewModel)
+        [ResolverMethod(Scope.Prototype)]
+        public AxisView(AxisViewModel viewModel) : base(viewModel)
         {
-            ViewModel = viewModel;
-            DataContext = viewModel;
             InitializeComponent();
         }
 
-        public void CleanUp()
+        public override void Initialize(AxisContext context)
         {
-            ViewModel.CleanUp();
+            ViewModel.Initialize(context.Source);
         }
 
         public void UpdateValues(IDevice device)

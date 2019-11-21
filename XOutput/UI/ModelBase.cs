@@ -54,7 +54,7 @@ namespace XOutput.UI
     {
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(CollectionHelper));
 
-        public static void RemoveView<T>(this ObservableCollection<T> collection, params T[] values) where T : ICleanUp
+        public static void RemoveView<T>(this ObservableCollection<T> collection, params T[] values) where T : IViewBase
         {
             foreach (var value in values)
             {
@@ -71,7 +71,7 @@ namespace XOutput.UI
                 }
             }
         }
-        public static void ClearView<T>(this ObservableCollection<T> collection) where T : ICleanUp
+        public static void ClearView<T>(this ObservableCollection<T> collection) where T : IViewBase
         {
             foreach (var value in collection)
             {

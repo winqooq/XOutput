@@ -7,7 +7,7 @@ using XOutput.Tools;
 
 namespace XOutput.UI.Windows
 {
-    public partial class ControllerSettingsWindow : WindowBase<ControllerSettingsViewModel, ControllerSettingsModel>
+    public partial class ControllerSettingsWindow : WindowBase<ControllerSettingsViewModel, ControllerSettingsModel, ControllerSettingsContext>
     {
         private readonly DispatcherTimer timer = new DispatcherTimer();
         private GameController controller;
@@ -18,9 +18,9 @@ namespace XOutput.UI.Windows
             InitializeComponent();
         }
 
-        public void Initialize(GameController controller)
+        public override void Initialize(ControllerSettingsContext context)
         {
-            this.controller = controller;
+            controller = context.Controller;
             timer.Interval = TimeSpan.FromMilliseconds(10);
             timer.Tick += TimerTick;
             ViewModel.Initialize(controller);

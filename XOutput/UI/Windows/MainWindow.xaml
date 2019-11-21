@@ -1,17 +1,17 @@
-﻿<UI:WindowBase x:Class="XOutput.UI.Windows.MainWindow"
-               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-               xmlns:tb="http://www.hardcodet.net/taskbar"
-               xmlns:UI="clr-namespace:XOutput.UI"
-               xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
-               xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-               xmlns:local="clr-namespace:XOutput.UI.Windows"
-               mc:Ignorable="d"
-               x:TypeArguments="local:MainWindowViewModel,local:MainWindowModel"
-               d:DataContext="{d:DesignInstance Type=local:MainWindowModel, IsDesignTimeCreatable=False}"
-               Title="XOutput" Width="700" Height="700">
+﻿<local:WindowBase x:Class="XOutput.UI.Windows.MainWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:tb="http://www.hardcodet.net/taskbar"
+                  xmlns:UI="clr-namespace:XOutput.UI"
+                  xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                  xmlns:local="clr-namespace:XOutput.UI.Windows"
+                  mc:Ignorable="d"
+                  x:TypeArguments="local:MainWindowViewModel,local:MainWindowModel,local:MainWindowContext"
+                  d:DataContext="{d:DesignInstance Type=local:MainWindowModel, IsDesignTimeCreatable=False}"
+                  Title="XOutput" Width="700" Height="700">
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
             <Controls:Flyout Header="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Notifications'}"
@@ -102,4 +102,4 @@
             </DockPanel>
         </GroupBox>
     </Grid>
-</UI:WindowBase>
+</local:WindowBase>

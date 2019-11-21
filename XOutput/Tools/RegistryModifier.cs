@@ -94,8 +94,8 @@ namespace XOutput.Tools
             try
             {
                 return calculate(registryModifierService);
-            } 
-            catch(Exception)
+            }
+            catch (Exception)
             {
                 // Continue
             }
@@ -107,7 +107,7 @@ namespace XOutput.Tools
             {
                 // Continue
             }
-            throw new Exception("Cannot perform registry action");
+            return default;
         }
     }
 }

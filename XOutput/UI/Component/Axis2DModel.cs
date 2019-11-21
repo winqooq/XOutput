@@ -1,66 +1,55 @@
 ﻿using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
     public class Axis2DModel : ModelBase
     {
-        public InputSource TypeX { get; set; }
-        public InputSource TypeY { get; set; }
+        private InputSource typeX;
+        public InputSource TypeX
+        {
+            get => typeX;
+            set { Set(value, ref typeX, nameof(TypeX)); }
+        }
+        private InputSource typeY;
+        public InputSource TypeY
+        {
+            get => typeY;
+            set { Set(value, ref typeY, nameof(TypeY)); }
+        }
 
         private int valuex;
         public int ValueX
         {
             get => valuex;
-            set
-            {
-                if (valuex != value)
-                {
-                    valuex = value;
-                    OnPropertyChanged(nameof(ValueX));
-                }
-            }
+            set { Set(value, ref valuex, nameof(ValueX)); }
         }
 
         private int valuey;
         public int ValueY
         {
             get => valuey;
-            set
-            {
-                if (valuey != value)
-                {
-                    valuey = value;
-                    OnPropertyChanged(nameof(ValueY));
-                }
-            }
+            set { Set(value, ref valuey, nameof(ValueY)); }
         }
 
         private int maxx;
         public int MaxX
         {
             get => maxx;
-            set
-            {
-                if (maxx != value)
-                {
-                    maxx = value;
-                    OnPropertyChanged(nameof(MaxX));
-                }
-            }
+            set { Set(value, ref maxx, nameof(MaxX)); }
         }
 
         private int maxy;
         public int MaxY
         {
             get => maxy;
-            set
-            {
-                if (maxy != value)
-                {
-                    maxy = value;
-                    OnPropertyChanged(nameof(MaxY));
-                }
-            }
+            set { Set(value, ref maxy, nameof(MaxY)); }
+        }
+
+        [ResolverMethod(Scope.Prototype)]
+        public Axis2DModel()
+        {
+
         }
     }
 }

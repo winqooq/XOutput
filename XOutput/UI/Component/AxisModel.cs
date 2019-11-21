@@ -1,4 +1,5 @@
 ﻿using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
@@ -8,40 +9,25 @@ namespace XOutput.UI.Component
         public InputSource Type
         {
             get => type;
-            set
-            {
-                if (type != value)
-                {
-                    type = value;
-                    OnPropertyChanged(nameof(Type));
-                }
-            }
+            set { Set(value, ref type, nameof(Type)); }
         }
         private int value;
         public int Value
         {
             get => value;
-            set
-            {
-                if (this.value != value)
-                {
-                    this.value = value;
-                    OnPropertyChanged(nameof(AxisModel.Value));
-                }
-            }
+            set { Set(value, ref this.value, nameof(Value)); }
         }
         private int max;
         public int Max
         {
             get => max;
-            set
-            {
-                if (max != value)
-                {
-                    max = value;
-                    OnPropertyChanged(nameof(Max));
-                }
-            }
+            set { Set(value, ref max, nameof(Max)); }
+        }
+
+        [ResolverMethod(Scope.Prototype)]
+        public AxisModel()
+        {
+
         }
     }
 }

@@ -21,9 +21,9 @@ namespace XOutput.Logging
             this.level = level;
         }
 
-        protected string GetCallerMethodName()
+        protected string GetCallerMethodName(StackFrame frame)
         {
-            MethodBase method = new StackTrace().GetFrame(2).GetMethod();
+            MethodBase method = frame.GetMethod();
             bool asyncFunction = method.DeclaringType.Name.Contains("<") && method.DeclaringType.Name.Contains(">");
             if (asyncFunction)
             {
@@ -37,120 +37,121 @@ namespace XOutput.Logging
             }
         }
 
-        protected string CreatePrefix(DateTime time, LogLevel loglevel, string classname, string methodname)
+        protected string CreatePrefix(DateTime time, LogLevel loglevel, Type clazz, StackFrame stackFrame)
         {
-            return $"{time.ToString("yyyy-MM-dd HH\\:mm\\:ss.fff zzz")} {loglevel.Text} {classname}.{methodname}: ";
+            string methodName = GetCallerMethodName(stackFrame);
+            return $"{time.ToString("yyyy-MM-dd HH\\:mm\\:ss.fff zzz")} {loglevel.Text} {clazz.FullName}.{methodName}: ";
         }
 
         public void Trace(string log)
         {
-            LogCheck(LogLevel.Trace, GetCallerMethodName(), log);
+            LogCheck(LogLevel.Trace, new StackTrace().GetFrame(1), log);
         }
 
         public void Trace(Func<string> log)
         {
-            LogCheck(LogLevel.Trace, GetCallerMethodName(), log);
+            LogCheck(LogLevel.Trace, new StackTrace().GetFrame(1), log);
         }
 
         public void Debug(string log)
         {
-            LogCheck(LogLevel.Debug, GetCallerMethodName(), log);
+            LogCheck(LogLevel.Debug, new StackTrace().GetFrame(1), log);
         }
 
         public void Debug(Func<string> log)
         {
-            LogCheck(LogLevel.Debug, GetCallerMethodName(), log);
+            LogCheck(LogLevel.Debug, new StackTrace().GetFrame(1), log);
         }
 
         public void Info(string log)
         {
-            LogCheck(LogLevel.Info, GetCallerMethodName(), log);
+            LogCheck(LogLevel.Info, new StackTrace().GetFrame(1), log);
         }
 
         public void Info(Func<string> log)
         {
-            LogCheck(LogLevel.Info, GetCallerMethodName(), log);
+            LogCheck(LogLevel.Info, new StackTrace().GetFrame(1), log);
         }
 
         public void Warning(string log)
         {
-            LogCheck(LogLevel.Warning, GetCallerMethodName(), log);
+            LogCheck(LogLevel.Warning, new StackTrace().GetFrame(1), log);
         }
 
         public void Warning(Func<string> log)
         {
-            LogCheck(LogLevel.Warning, GetCallerMethodName(), log);
+            LogCheck(LogLevel.Warning, new StackTrace().GetFrame(1), log);
         }
 
         public void Warning(Exception ex)
         {
-            LogCheck(LogLevel.Warning, GetCallerMethodName(), ex.ToString());
+            LogCheck(LogLevel.Warning, new StackTrace().GetFrame(1), ex.ToString());
         }
 
         public void Warning(string log, Exception ex)
         {
-            LogCheck(LogLevel.Warning, GetCallerMethodName(), log, ex);
+            LogCheck(LogLevel.Warning, new StackTrace().GetFrame(1), log, ex);
         }
 
         public void Warning(Func<string> log, Exception ex)
         {
-            LogCheck(LogLevel.Warning, GetCallerMethodName(), log, ex);
+            LogCheck(LogLevel.Warning, new StackTrace().GetFrame(1), log, ex);
         }
 
         public void Error(string log)
         {
-            LogCheck(LogLevel.Error, GetCallerMethodName(), log);
+            LogCheck(LogLevel.Error, new StackTrace().GetFrame(1), log);
         }
 
         public void Error(Func<string> log)
         {
-            LogCheck(LogLevel.Error, GetCallerMethodName(), log);
+            LogCheck(LogLevel.Error, new StackTrace().GetFrame(1), log);
         }
 
         public void Error(Exception ex)
         {
-            LogCheck(LogLevel.Error, GetCallerMethodName(), ex.ToString());
+            LogCheck(LogLevel.Error, new StackTrace().GetFrame(1), ex.ToString());
         }
 
         public void Error(string log, Exception ex)
         {
-            LogCheck(LogLevel.Error, GetCallerMethodName(), log, ex);
+            LogCheck(LogLevel.Error, new StackTrace().GetFrame(1), log, ex);
         }
 
         public void Error(Func<string> log, Exception ex)
         {
-            LogCheck(LogLevel.Error, GetCallerMethodName(), log, ex);
+            LogCheck(LogLevel.Error, new StackTrace().GetFrame(1), log, ex);
         }
 
-        protected void LogCheck(LogLevel loglevel, string methodName, string log)
+        protected void LogCheck(LogLevel loglevel, StackFrame stackFrame, string log)
         {
             if (loglevel.Level >= Level)
             {
-                Log(loglevel, methodName, log);
+                Log(loglevel, stackFrame, log);
             }
         }
 
-        protected void LogCheck(LogLevel loglevel, string methodName, string log, Exception ex)
+        protected void LogCheck(LogLevel loglevel, StackFrame stackFrame, string log, Exception ex)
         {
             if (loglevel.Level >= Level)
             {
-                Log(loglevel, methodName, log + Environment.NewLine + ex.ToString());
+                Log(loglevel, stackFrame, log + Environment.NewLine + ex.ToString());
             }
         }
 
-        protected void LogCheck(LogLevel loglevel, string methodName, Func<string> log)
+        protected void LogCheck(LogLevel loglevel, StackFrame stackFrame, Func<string> log)
         {
             if (loglevel.Level >= Level)
             {
-                Log(loglevel, methodName, log());
+                Log(loglevel, stackFrame, log());
             }
         }
 
-        protected void LogCheck(LogLevel loglevel, string methodName, Func<string> log, Exception ex)
+        protected void LogCheck(LogLevel loglevel, StackFrame stackFrame, Func<string> log, Exception ex)
         {
             if (loglevel.Level >= Level)
             {
-                Log(loglevel, methodName, log() + Environment.NewLine + ex.ToString());
+                Log(loglevel, stackFrame, log() + Environment.NewLine + ex.ToString());
             }
         }
 
@@ -161,47 +162,47 @@ namespace XOutput.Logging
         /// <param name="methodName">name of the caller method</param>
         /// <param name="log">log text</param>
         /// <returns></returns>
-        protected abstract void Log(LogLevel loglevel, string methodName, string log);
+        protected abstract void Log(LogLevel loglevel, StackFrame stackFrame, string log);
 
         public void SafeCall(Action action)
         {
-            SafeCall(action, null, LogLevel.Error, GetCallerMethodName());
+            SafeCall(action, null, LogLevel.Error, new StackTrace().GetFrame(1));
         }
         public void SafeCall(Action action, string log)
         {
-            SafeCall(action, log, LogLevel.Error, GetCallerMethodName());
+            SafeCall(action, log, LogLevel.Error, new StackTrace().GetFrame(1));
         }
 
         public void SafeCall(Action action, string log, LogLevel level)
         {
-            SafeCall(action, log, level, GetCallerMethodName());
+            SafeCall(action, log, level, new StackTrace().GetFrame(1));
         }
 
         public T SafeCall<T>(Func<T> action)
         {
-            return SafeCall(action, null, LogLevel.Error, GetCallerMethodName());
+            return SafeCall(action, null, LogLevel.Error, new StackTrace().GetFrame(1));
         }
 
         public T SafeCall<T>(Func<T> action, string log)
         {
-            return SafeCall(action, log, LogLevel.Error, GetCallerMethodName());
+            return SafeCall(action, log, LogLevel.Error, new StackTrace().GetFrame(1));
         }
 
         public T SafeCall<T>(Func<T> action, string log, LogLevel level)
         {
-            return SafeCall(action, log, level, GetCallerMethodName());
+            return SafeCall(action, log, level, new StackTrace().GetFrame(1));
         }
 
-        private void SafeCall(Action action, string log, LogLevel level, string methodName)
+        private void SafeCall(Action action, string log, LogLevel level, StackFrame stackFrame)
         {
             SafeCall<object>(() =>
             {
                 action();
                 return null;
-            }, log, level, methodName);
+            }, log, level, stackFrame);
         }
 
-        private T SafeCall<T>(Func<T> action, string log, LogLevel level, string methodName)
+        private T SafeCall<T>(Func<T> action, string log, LogLevel level, StackFrame stackFrame)
         {
             try
             {
@@ -209,7 +210,7 @@ namespace XOutput.Logging
             }
             catch(Exception ex)
             {
-                Log(level, methodName, log == null ? ex.ToString() : log + Environment.NewLine + ex.ToString());
+                Log(level, stackFrame, log == null ? ex.ToString() : log + Environment.NewLine + ex.ToString());
                 return default;
             }
         }

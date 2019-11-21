@@ -41,9 +41,9 @@ namespace XOutput.Logging
         /// <param name="methodName">name of the caller method</param>
         /// <param name="log">log text</param>
         /// <returns></returns>
-        protected override void Log(LogLevel loglevel, string methodName, string log)
+        protected override void Log(LogLevel loglevel, StackFrame stackFrame, string log)
         {
-            System.Diagnostics.Trace.WriteLine(CreatePrefix(DateTime.Now, loglevel, LoggerType.FullName, methodName) + log);
+            System.Diagnostics.Trace.WriteLine(CreatePrefix(DateTime.Now, loglevel, LoggerType, stackFrame) + log);
         }
     }
 }

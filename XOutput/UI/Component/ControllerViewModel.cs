@@ -45,8 +45,7 @@ namespace XOutput.UI.Component
         public void Edit()
         {
             var window = ApplicationContext.Global.Resolve<ControllerSettingsWindow>();
-            window.Initialize(controller);
-            window.ShowAndWait();
+            window.ShowAndWait(new ControllerSettingsContext { Controller = controller });
             Model.DisplayName = controller.DisplayName;
         }
 

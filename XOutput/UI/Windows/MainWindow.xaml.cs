@@ -11,7 +11,7 @@ namespace XOutput.UI.Windows
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : WindowBase<MainWindowViewModel, MainWindowModel>
+    public partial class MainWindow : WindowBase<MainWindowViewModel, MainWindowModel, MainWindowContext>
     {
         private static readonly ILogger logger = LoggerFactory.GetLogger(typeof(MainWindow));
 
@@ -39,6 +39,11 @@ namespace XOutput.UI.Windows
             viewModel.Initialize();
             Dispatcher.Invoke(Initialize);
             logger.Info("The application has started.");
+        }
+
+        public override void Initialize(MainWindowContext context)
+        {
+
         }
 
         public override void CleanUp()

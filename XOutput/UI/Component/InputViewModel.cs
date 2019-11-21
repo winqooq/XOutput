@@ -38,8 +38,7 @@ namespace XOutput.UI.Component
         public void Edit()
         {
             var controllerSettingsWindow = ApplicationContext.Global.Resolve<InputSettingsWindow>();
-            controllerSettingsWindow.Initialize(Model.Device);
-            controllerSettingsWindow.ShowAndWait();
+            controllerSettingsWindow.ShowAndWait(new InputSettingsContext { InputDevice = Model.Device });
         }
 
         private void Timer_Tick(object sender, EventArgs e)

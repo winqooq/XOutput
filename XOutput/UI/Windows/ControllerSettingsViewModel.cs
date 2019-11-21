@@ -111,10 +111,17 @@ namespace XOutput.UI.Windows
             var ry = controller.XInput.Sources.OfType<XOutputSource>().First(s => s.XInputType == XInputTypes.RY);
             var l2 = controller.XInput.Sources.OfType<XOutputSource>().First(s => s.XInputType == XInputTypes.L2);
             var r2 = controller.XInput.Sources.OfType<XOutputSource>().First(s => s.XInputType == XInputTypes.R2);
-            Model.XInputAxisViews.Add(new Axis2DView(new Axis2DViewModel(new Axis2DModel(), lx, ly)));
-            Model.XInputAxisViews.Add(new Axis2DView(new Axis2DViewModel(new Axis2DModel(), rx, ry)));
-            Model.XInputAxisViews.Add(new AxisView(new AxisViewModel(new AxisModel(), l2)));
-            Model.XInputAxisViews.Add(new AxisView(new AxisViewModel(new AxisModel(), r2)));
+            var lAxes = ApplicationContext.Global.Resolve<Axis2DView>().InitializeWith(v => { v.ViewModel.Initialize(lx, ly); });
+            Model.XInputAxisViews.Add(lAxes);
+            var rAxes = ApplicationContext.Global.Resolve<Axis2DView>();
+            rAxes.ViewModel.Initialize(rx, ry);
+            Model.XInputAxisViews.Add(rAxes);
+            var l2View = ApplicationContext.Global.Resolve<AxisView>();
+            l2View.ViewModel.Initialize(l2);
+            Model.XInputAxisViews.Add(l2View);
+            var r2View = ApplicationContext.Global.Resolve<AxisView>();
+            r2View.ViewModel.Initialize(l2);
+            Model.XInputAxisViews.Add(r2View);
         }
 
         private void UpdateXInputControls()

@@ -4,13 +4,18 @@ using XOutput.Tools;
 
 namespace XOutput.UI.Windows
 {
-    public partial class SettingsWindow : ResultWindowBase<SettingsViewModel, SettingsModel, SettingsResult>
+    public partial class SettingsWindow : ResultWindowBase<SettingsViewModel, SettingsModel, SettingsContext, SettingsResult>
     {
         [ResolverMethod(Scope.Prototype)]
         public SettingsWindow(SettingsViewModel viewModel) : base(viewModel)
         {
             InitializeComponent();
             Closing += Window_Closing;
+        }
+
+        public override void Initialize(SettingsContext context)
+        {
+
         }
 
         private void CloseClick(object sender, RoutedEventArgs e)
