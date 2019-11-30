@@ -4,9 +4,8 @@ using XOutput.Devices;
 using XOutput.Devices.Mapper;
 using XOutput.Devices.XInput;
 using XOutput.Tools;
-using XOutput.UI.Component;
 
-namespace XOutput.UI
+namespace XOutput.UI.Component
 {
     public class MappingBlockModel : ModelBase
     {

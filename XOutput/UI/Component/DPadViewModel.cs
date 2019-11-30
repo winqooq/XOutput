@@ -1,15 +1,24 @@
 ﻿using System.Linq;
 using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
     public class DPadViewModel : ViewModelBase<DPadModel>
     {
         private const int len = 21;
-        private readonly int dPadIndex;
+        private int dPadIndex;
+        private IDevice device;
 
-        public DPadViewModel(DPadModel model, int dPadIndex, bool showLabel) : base(model)
+        [ResolverMethod(Scope.Prototype)]
+        public DPadViewModel(DPadModel model) : base(model)
         {
+
+        }
+
+        public void Initialize(IDevice device, int dPadIndex, bool showLabel)
+        {
+            this.device = device;
             this.dPadIndex = dPadIndex;
             if (showLabel)
             {
@@ -17,7 +26,7 @@ namespace XOutput.UI.Component
             }
         }
 
-        public void UpdateValues(IDevice device)
+        public void UpdateValues()
         {
             Model.Direction = device.DPads.ElementAt(dPadIndex);
             if (Model.Direction.HasFlag(DPadDirection.Up))

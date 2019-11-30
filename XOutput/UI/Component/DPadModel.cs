@@ -1,4 +1,5 @@
 ﻿using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
@@ -8,56 +9,34 @@ namespace XOutput.UI.Component
         public DPadDirection Direction
         {
             get => direction;
-            set
-            {
-                if (direction != value)
-                {
-                    direction = value;
-                    OnPropertyChanged(nameof(Direction));
-                }
-            }
+            set { Set(value, ref direction, nameof(Direction)); }
         }
 
         private int valuex;
         public int ValueX
         {
             get => valuex;
-            set
-            {
-                if (valuex != value)
-                {
-                    valuex = value;
-                    OnPropertyChanged(nameof(ValueX));
-                }
-            }
+            set { Set(value, ref valuex, nameof(ValueX)); }
         }
 
         private int valuey;
         public int ValueY
         {
             get => valuey;
-            set
-            {
-                if (valuey != value)
-                {
-                    valuey = value;
-                    OnPropertyChanged(nameof(ValueY));
-                }
-            }
+            set { Set(value, ref valuey, nameof(ValueY)); }
         }
 
         private string label;
         public string Label
         {
             get => label;
-            set
-            {
-                if (label != value)
-                {
-                    label = value;
-                    OnPropertyChanged(nameof(Label));
-                }
-            }
+            set { Set(value, ref label, nameof(Label)); }
+        }
+
+        [ResolverMethod(Scope.Prototype)]
+        public DPadModel()
+        {
+
         }
     }
 }

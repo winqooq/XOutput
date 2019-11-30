@@ -49,7 +49,8 @@ namespace XOutput.UI.Windows
         {
             var types = XInputHelper.Instance.Values;
             new AutoConfigureWindow(new AutoConfigureViewModel(new AutoConfigureModel(), InputDevices.Instance.GetDevices(), controller.Mapper, types.ToArray()), types.Any()).ShowDialog();
-            foreach (var v in Model.MapperAxisViews.Concat(Model.MapperButtonViews).Concat(Model.MapperDPadViews))
+            // foreach (var v in Model.MapperAxisViews.Concat(Model.MapperButtonViews).Concat(Model.MapperDPadViews))
+            foreach (var v in Model.MapperAxisViews.Concat(Model.MapperDPadViews))
             {
                 v.Refresh();
             }
@@ -84,7 +85,10 @@ namespace XOutput.UI.Windows
         {
             foreach (var xInputType in XInputHelper.Instance.Buttons)
             {
-                Model.MapperButtonViews.Add(new MappingView(new MappingViewModel(new MappingModel(), controller, xInputType)));
+                var view = ApplicationContext.Global.Resolve<MappingBlockView>();
+                view.Initialize(new MappingBlockContext { });
+                Model.MapperButtonViews.Add(view);
+
             }
             foreach (var xInputType in XInputHelper.Instance.DPad)
             {
@@ -108,7 +112,9 @@ namespace XOutput.UI.Windows
                 buttonView.Initialize(new ButtonContext { Source = buttonInput });
                 Model.XInputButtonViews.Add(buttonView);
             }
-            Model.XInputDPadViews.Add(new DPadView(new DPadViewModel(new DPadModel(), 0, false)));
+            var dPadView = ApplicationContext.Global.Resolve<DPadView>();
+            dPadView.Initialize(new DPadContext { Device = controller.XInput, DPadIndex = 0, ShowLabel = false });
+            Model.XInputDPadViews.Add(dPadView);
             var lx = controller.XInput.Sources.OfType<XOutputSource>().First(s => s.XInputType == XInputTypes.LX);
             var ly = controller.XInput.Sources.OfType<XOutputSource>().First(s => s.XInputType == XInputTypes.LY);
             var rx = controller.XInput.Sources.OfType<XOutputSource>().First(s => s.XInputType == XInputTypes.RX);
@@ -132,15 +138,15 @@ namespace XOutput.UI.Windows
         {
             foreach (var axisView in Model.XInputAxisViews)
             {
-                axisView.UpdateValues(controller.XInput);
+                axisView.UpdateValues();
             }
             foreach (var buttonView in Model.XInputButtonViews)
             {
-                buttonView.UpdateValues(controller.XInput);
+                buttonView.UpdateValues();
             }
             foreach (var dPadView in Model.XInputDPadViews)
             {
-                dPadView.UpdateValues(controller.XInput);
+                dPadView.UpdateValues();
             }
         }
     }

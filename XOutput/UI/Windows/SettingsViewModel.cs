@@ -65,15 +65,7 @@ namespace XOutput.UI.Windows
 
         public bool NeedConfirmation()
         {
-            if(confirmed)
-            {
-                return false;
-            }
-            if(Model.Changed)
-            {
-                return true;
-            }
-            return false;
+            return !confirmed || Model.Changed;
         }
 
         private GeneralSettings createSettingsFromModel()

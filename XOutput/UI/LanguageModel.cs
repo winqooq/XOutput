@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using XOutput.Tools;
 using XOutput.UI;
 
 namespace XOutput

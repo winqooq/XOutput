@@ -1,30 +1,28 @@
 ﻿using System.Windows.Controls;
 using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
     /// <summary>
     /// Interaction logic for AxisView.xaml
     /// </summary>
-    public partial class DPadView : UserControl, IUpdatableView, IViewBase<DPadViewModel, DPadModel>
-    {
-        public DPadViewModel ViewModel { get; private set; }
-
-        public DPadView(DPadViewModel viewModel)
+    public partial class DPadView : ComponentBase<DPadViewModel, DPadModel, DPadContext>, IUpdatableView
+    { 
+        [ResolverMethod(Scope.Prototype)]
+        public DPadView(DPadViewModel viewModel) : base(viewModel)
         {
-            ViewModel = viewModel;
-            DataContext = viewModel;
             InitializeComponent();
         }
 
-        public void CleanUp()
+        public override void Initialize(DPadContext context)
         {
-            ViewModel.CleanUp();
+            ViewModel.Initialize(context.Device, context.DPadIndex, context.ShowLabel);
         }
 
-        public void UpdateValues(IDevice device)
+        public void UpdateValues()
         {
-            ViewModel.UpdateValues(device);
+            ViewModel.UpdateValues();
         }
     }
 }

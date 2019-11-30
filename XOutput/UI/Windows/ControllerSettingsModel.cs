@@ -9,7 +9,7 @@ namespace XOutput.UI.Windows
     {
         public ObservableCollection<MappingView> MapperAxisViews { get; private set; }
         public ObservableCollection<MappingView> MapperDPadViews { get; private set; }
-        public ObservableCollection<MappingView> MapperButtonViews { get; private set; }
+        public ObservableCollection<MappingBlockView> MapperButtonViews { get; private set; }
 
         public ObservableCollection<IUpdatableView> XInputAxisViews { get; private set; }
         public ObservableCollection<IUpdatableView> XInputDPadViews { get; private set; }
@@ -45,7 +45,7 @@ namespace XOutput.UI.Windows
             XInputButtonViews = new ObservableCollection<IUpdatableView>();
             XInputDPadViews = new ObservableCollection<IUpdatableView>();
             MapperAxisViews = new ObservableCollection<MappingView>();
-            MapperButtonViews = new ObservableCollection<MappingView>();
+            MapperButtonViews = new ObservableCollection<MappingBlockView>();
             MapperDPadViews = new ObservableCollection<MappingView>();
             ForceFeedbacks = new ObservableCollection<ComboBoxItem>();
         }

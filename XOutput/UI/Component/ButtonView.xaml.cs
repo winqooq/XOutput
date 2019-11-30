@@ -9,7 +9,6 @@ namespace XOutput.UI.Component
         [ResolverMethod(Scope.Prototype)]
         public ButtonView(ButtonViewModel viewModel) : base(viewModel)
         {
-            DataContext = viewModel;
             InitializeComponent();
         }
 
@@ -18,9 +17,9 @@ namespace XOutput.UI.Component
             ViewModel.Initialize(context.Source);
         }
 
-        public void UpdateValues(IDevice device)
+        public void UpdateValues()
         {
-            ViewModel.UpdateValues(device);
+            ViewModel.UpdateValues();
         }
     }
 }

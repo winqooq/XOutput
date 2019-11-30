@@ -16,9 +16,9 @@ namespace XOutput.UI.Component
             Model.Type = type;
         }
 
-        public void UpdateValues(IDevice device)
+        public void UpdateValues()
         {
-            Model.Value = device.Get(Model.Type) > 0.5;
+            Model.Value = Model.Type.Value > 0.5;
         }
     }
 }

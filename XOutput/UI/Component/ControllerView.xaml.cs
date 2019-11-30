@@ -6,33 +6,22 @@ using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
-    /// <summary>
-    /// Interaction logic for ControllerView.xaml
-    /// </summary>
-    public partial class ControllerView : UserControl, IViewBase<ControllerViewModel, ControllerModel>
+    public partial class ControllerView : ComponentBase<ControllerViewModel, ControllerModel, ControllerContext>
     {
         public event Action<ControllerView, GameController> RemoveClicked;
-        public ControllerViewModel ViewModel { get; private set; }
 
         private GameController controller;
 
         [ResolverMethod(Scope.Prototype)]
-        public ControllerView(ControllerViewModel viewModel)
+        public ControllerView(ControllerViewModel viewModel) : base(viewModel)
         {
-            ViewModel = viewModel;
-            DataContext = viewModel;
             InitializeComponent();
         }
 
-        public void Initialize(ControllerContext context)
+        public override void Initialize(ControllerContext context)
         {
             controller = context.Controller;
             ViewModel.Initialize(context.Controller);
-        }
-
-        public void CleanUp()
-        {
-            ViewModel.CleanUp();
         }
 
         private void OpenClick(object sender, RoutedEventArgs e)
@@ -47,7 +36,7 @@ namespace XOutput.UI.Component
 
         private void RemoveClick(object sender, RoutedEventArgs e)
         {
-            RemoveClicked?.Invoke(this, this.controller);
+            RemoveClicked?.Invoke(this, controller);
         }
     }
 }

@@ -29,16 +29,19 @@ namespace XOutput.Tools
             get { return language; }
             set
             {
-                var v = value;
-                if (!data.ContainsKey(v))
+                if (language != value)
                 {
-                    v = "English";
-                }
-                if (language != v)
-                {
-                    language = v;
-                    logger.Info("Language is set to " + language);
-                    LanguageModel.Instance.Data = data[language];
+                    var v = value;
+                    if (!data.ContainsKey(v))
+                    {
+                        v = "English";
+                    }
+                    if (language != v)
+                    {
+                        language = v;
+                        logger.Info("Language is set to " + language);
+                        LanguageModel.Instance.Data = data[language];
+                    }
                 }
             }
         }

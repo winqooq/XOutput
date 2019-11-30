@@ -68,13 +68,19 @@ namespace XOutput.Devices.XInput
         {
             foreach (var source in boundSources)
             {
-                source.InputChanged -= SourceInputChanged;
+                if (!sources.Contains(source))
+                {
+                    source.InputChanged -= SourceInputChanged;
+                }
+            }
+            foreach (var source in sources)
+            {
+                if (!boundSources.Contains(source))
+                {
+                    source.InputChanged += SourceInputChanged;
+                }
             }
             boundSources = sources;
-            foreach (var source in boundSources)
-            {
-                source.InputChanged += SourceInputChanged;
-            }
             RefreshInput(true);
         }
 
@@ -84,17 +90,6 @@ namespace XOutput.Devices.XInput
             {
                 source.InputChanged -= SourceInputChanged;
             }
-        }
-
-        /// <summary>
-        /// Gets the current state of the inputTpye.
-        /// <para>Implements <see cref="IDevice.Get(InputSource)"/></para>
-        /// </summary>
-        /// <param name="inputType">Type of input</param>
-        /// <returns>Value</returns>
-        public double Get(InputSource source)
-        {
-            return source.Value;
         }
 
         private void SourceInputChanged(object sender, DeviceInputChangedEventArgs e)

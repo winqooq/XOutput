@@ -250,17 +250,6 @@ namespace XOutput.Devices.Input.DirectInput
         }
 
         /// <summary>
-        /// Gets the current state of the inputTpye.
-        /// <para>Implements <see cref="IDevice.Get(InputSource)"/></para>
-        /// </summary>
-        /// <param name="source">Type of input</param>
-        /// <returns>Value</returns>
-        public double Get(InputSource source)
-        {
-            return source.Value;
-        }
-
-        /// <summary>
         /// Sets the force feedback motor values.
         /// <para>Implements <see cref="IInputDevice.SetForceFeedback(double, double)"/></para>
         /// </summary>

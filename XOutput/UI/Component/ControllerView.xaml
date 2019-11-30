@@ -1,12 +1,13 @@
-﻿<UserControl x:Class="XOutput.UI.Component.ControllerView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:XOutput.UI.Component"
-             d:DataContext="{d:DesignInstance Type=local:ControllerViewModel, IsDesignTimeCreatable=False}"
-             mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="300">
+﻿<local:ComponentBase x:Class="XOutput.UI.Component.ControllerView"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:local="clr-namespace:XOutput.UI.Component"
+                     x:TypeArguments="local:ControllerViewModel,local:ControllerModel,local:ControllerContext"
+                     d:DataContext="{d:DesignInstance Type=local:ControllerViewModel, IsDesignTimeCreatable=False}"
+                     mc:Ignorable="d" 
+                     d:DesignHeight="50" d:DesignWidth="300">
     <Grid Background="{Binding Model.Background}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -31,4 +32,4 @@
             </MultiBinding>
         </Button>
     </Grid>
-</UserControl>
+</local:ComponentBase>

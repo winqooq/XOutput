@@ -106,17 +106,6 @@ namespace XOutput.Devices.Input.Keyboard
         }
 
         /// <summary>
-        /// Gets the current state of the inputTpye.
-        /// <para>Implements <see cref="IDevice.Get(InputSource)"/></para>
-        /// </summary>
-        /// <param name="inputType">Source of input</param>
-        /// <returns>Value</returns>
-        public double Get(InputSource source)
-        {
-            return source.Value;
-        }
-
-        /// <summary>
         /// Display name.
         /// <para>Overrides <see cref="object.ToString()"/></para>
         /// </summary>

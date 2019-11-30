@@ -133,7 +133,9 @@ namespace XOutput.UI.Windows
             }
             foreach (var dPadInput in Enumerable.Range(0, device.DPads.Count()))
             {
-                Model.InputDPadViews.Add(new DPadView(new DPadViewModel(new DPadModel(), dPadInput, true)));
+                var dPadView = ApplicationContext.Global.Resolve<DPadView>();
+                dPadView.Initialize(new DPadContext { Device = device, DPadIndex = dPadInput, ShowLabel = true });
+                Model.InputDPadViews.Add(dPadView);
             }
         }
 
@@ -141,19 +143,19 @@ namespace XOutput.UI.Windows
         {
             foreach (var axisView in Model.InputAxisViews)
             {
-                axisView.UpdateValues(device);
+                axisView.UpdateValues();
             }
             foreach (var sliderView in Model.InputSliderViews)
             {
-                sliderView.UpdateValues(device);
+                sliderView.UpdateValues();
             }
             foreach (var buttonView in Model.InputButtonViews)
             {
-                buttonView.UpdateValues(device);
+                buttonView.UpdateValues();
             }
             foreach (var dPadView in Model.InputDPadViews)
             {
-                dPadView.UpdateValues(device);
+                dPadView.UpdateValues();
             }
         }
 

@@ -17,9 +17,9 @@ namespace XOutput.UI.Component
             ViewModel.Initialize(context.Source);
         }
 
-        public void UpdateValues(IDevice device)
+        public void UpdateValues()
         {
-            ViewModel.UpdateValues(device);
+            ViewModel.UpdateValues();
         }
     }
 }

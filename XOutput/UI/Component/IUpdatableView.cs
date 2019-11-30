@@ -5,9 +5,8 @@ namespace XOutput.UI.Component
     public interface IUpdatableView : IViewBase
     {
         /// <summary>
-        /// Updates the view from a device.
+        /// Updates the view.
         /// </summary>
-        /// <param name="device">device to update from</param>
-        void UpdateValues(IDevice device);
+        void UpdateValues();
     }
 }

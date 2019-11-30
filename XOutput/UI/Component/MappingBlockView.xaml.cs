@@ -4,21 +4,18 @@ using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
-    public partial class MappingBlockView : UserControl, IViewBase<MappingViewModel, MappingModel>
+    public partial class MappingBlockView : ComponentBase<MappingBlockViewModel, MappingBlockModel, MappingBlockContext>
     {
-        public MappingViewModel ViewModel { get; private set; }
 
         [ResolverMethod(Scope.Prototype)]
-        public MappingBlockView(MappingViewModel viewModel)
+        public MappingBlockView(MappingBlockViewModel viewModel) : base(viewModel)
         {
-            ViewModel = viewModel;
-            DataContext = viewModel;
             InitializeComponent();
         }
 
-        public void CleanUp()
+        public override void Initialize(MappingBlockContext context)
         {
-            ViewModel.CleanUp();
+
         }
     }
 }
