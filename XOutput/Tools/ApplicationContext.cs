@@ -10,14 +10,14 @@ namespace XOutput.Tools
 {
     public class ApplicationContext
     {
-        private static ApplicationContext global = new ApplicationContext();
+        private static readonly ApplicationContext global = new ApplicationContext();
         public static ApplicationContext Global => global;
 
         private readonly List<Resolver> resolvers = new List<Resolver>();
         public List<Resolver> Resolvers => resolvers;
-        private ISet<Type> constructorResolvedTypes = new HashSet<Type>();
+        private readonly ISet<Type> constructorResolvedTypes = new HashSet<Type>();
 
-        private object lockObj = new object();
+        private readonly object lockObj = new object();
 
         public T Resolve<T>()
         {
@@ -120,8 +120,8 @@ namespace XOutput.Tools
         Prototype
     }
 
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor, Inherited = true, AllowMultiple = false)]
-    public class ResolverMethod : Attribute
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor, Inherited = false, AllowMultiple = false)]
+    public sealed class ResolverMethod : Attribute
     {
         public Scope Scope { get; private set; }
         public ResolverMethod(Scope scope = Scope.Singleton)
@@ -132,10 +132,10 @@ namespace XOutput.Tools
 
     public class Resolver
     {
-        private Func<object[], object> creator;
-        private Type[] dependencies;
-        private Type type;
-        private Scope scope;
+        private readonly Func<object[], object> creator;
+        private readonly Type[] dependencies;
+        private readonly Type type;
+        private readonly Scope scope;
         private object singletonValue;
         public Tools.Scope Scope => scope;
         public bool IsSingleton => scope == Tools.Scope.Singleton;
@@ -202,14 +202,25 @@ namespace XOutput.Tools
 
     public class NoValueFoundException : Exception
     {
-        public NoValueFoundException(Type type) : base($"No value found for {type.FullName}") { }
+        public NoValueFoundException() { }
+
+        public NoValueFoundException(string message) : base(message) { }
+
+        public NoValueFoundException(string message, Exception innerException) : base(message, innerException) { }
+
+        public NoValueFoundException(Type type) : this($"No value found for {type.FullName}") { }
     }
 
     public class MultipleValuesFoundException : Exception
     {
-        private List<Resolver> resolvers;
+        private readonly List<Resolver> resolvers;
         public List<Resolver> Resolvers => resolvers;
-        public MultipleValuesFoundException(Type type, List<Resolver> resolvers) : base($"Multiple values found for {type.FullName}")
+        public MultipleValuesFoundException() { }
+
+        public MultipleValuesFoundException(string message) : base(message) { }
+
+        public MultipleValuesFoundException(string message, Exception innerException) : base(message, innerException) { }
+        public MultipleValuesFoundException(Type type, List<Resolver> resolvers) : this($"Multiple values found for {type.FullName}")
         {
             this.resolvers = resolvers;
         }

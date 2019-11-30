@@ -1,10 +1,17 @@
 ﻿using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
     public class ButtonViewModel : ViewModelBase<ButtonModel>
     {
-        public ButtonViewModel(ButtonModel model, InputSource type) : base(model)
+        [ResolverMethod(Scope.Prototype)]
+        public ButtonViewModel(ButtonModel model) : base(model)
+        {
+
+        }
+
+        public void Initialize(InputSource type)
         {
             Model.Type = type;
         }

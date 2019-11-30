@@ -1,4 +1,5 @@
 ﻿using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
@@ -8,27 +9,19 @@ namespace XOutput.UI.Component
         public InputSource Type
         {
             get => type;
-            set
-            {
-                if (type != value)
-                {
-                    type = value;
-                    OnPropertyChanged(nameof(Type));
-                }
-            }
+            set { Set(value, ref type, nameof(Type)); }
         }
         private bool value;
         public bool Value
         {
             get => value;
-            set
-            {
-                if (this.value != value)
-                {
-                    this.value = value;
-                    OnPropertyChanged(nameof(Value));
-                }
-            }
+            set { Set(value, ref this.value, nameof(Value)); }
+        }
+
+        [ResolverMethod(Scope.Prototype)]
+        public ButtonModel()
+        {
+
         }
     }
 }

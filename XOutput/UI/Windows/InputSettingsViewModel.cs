@@ -121,7 +121,9 @@ namespace XOutput.UI.Windows
             CreateInputAxes();
             foreach (var buttonInput in device.Sources.Where(s => s.Type == InputSourceTypes.Button))
             {
-                Model.InputButtonViews.Add(new ButtonView(new ButtonViewModel(new ButtonModel(), buttonInput)));
+                var buttonView = ApplicationContext.Global.Resolve<ButtonView>();
+                buttonView.Initialize(new ButtonContext { Source = buttonInput });
+                Model.InputButtonViews.Add(buttonView);
             }
             foreach (var sliderInput in device.Sources.Where(s => s.Type == InputSourceTypes.Slider))
             {

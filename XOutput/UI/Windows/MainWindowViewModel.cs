@@ -10,6 +10,7 @@ using XOutput.Devices;
 using XOutput.Devices.Input;
 using XOutput.Devices.Input.DirectInput;
 using XOutput.Devices.Mapper;
+using XOutput.Devices.XInput;
 using XOutput.Devices.XInput.SCPToolkit;
 using XOutput.Devices.XInput.Vigem;
 using XOutput.Diagnostics;
@@ -36,16 +37,17 @@ namespace XOutput.UI.Windows
         private readonly LanguageManager languageManager;
         private readonly HidGuardianManager hidGuardianManager;
         private readonly CommandRunner commandRunner;
+        private readonly XOutputManager xOutputManager;
 
         private readonly DispatcherTimer timer = new DispatcherTimer();
         private readonly DirectInputDevices directInputDevices = new DirectInputDevices();
         private GeneralSettings settings;
-        private bool installed;
         private readonly Dictionary<ControllerView, GameController> controllerMap = new Dictionary<ControllerView, GameController>();
 
         [ResolverMethod(Scope.Prototype)]
         public MainWindowViewModel(MainWindowModel model, Dispatcher dispatcher, SettingsManager settingsManager, NotificationService notificationService,
-            UpdateChecker updateChecker, LanguageManager languageManager, HidGuardianManager hidGuardianManager, CommandRunner commandRunner) : base(model)
+            UpdateChecker updateChecker, LanguageManager languageManager, HidGuardianManager hidGuardianManager, CommandRunner commandRunner,
+            XOutputManager xOutputManager) : base(model)
         {
             this.dispatcher = dispatcher;
             this.settingsManager = settingsManager;
@@ -54,6 +56,7 @@ namespace XOutput.UI.Windows
             this.languageManager = languageManager;
             this.hidGuardianManager = hidGuardianManager;
             this.commandRunner = commandRunner;
+            this.xOutputManager = xOutputManager;
 
             timer.Interval = TimeSpan.FromMilliseconds(10000);
             timer.Tick += Timer_Tick;
@@ -113,31 +116,27 @@ namespace XOutput.UI.Windows
                     MessageBox.Show(ex.ToString());
                 }
             }
-            bool vigem = VigemDevice.IsAvailable();
-            bool scp = ScpDevice.IsAvailable();
-            if (vigem)
+            if (xOutputManager.IsVigem)
             {
-                if (scp)
+                if (xOutputManager.IsScp)
                 {
-                    logger.Info("SCPToolkit is installed only.");
+                    logger.Info("SCPToolkit is obsolete.");
                     notificationService.Add("ScpInstalled", true);
-                }
-                installed = true;
-            }
-            else
-            {
-                if (scp)
-                {
-                    logger.Info("ViGEm is installed.");
-                    notificationService.Add("VigemNotInstalled", true);
-                    installed = true;
                 }
                 else
                 {
-                    logger.Error("Neither ViGEm nor SCPToolkit is installed.");
-                    notificationService.Add("VigemAndScpNotInstalled", true);
-                    installed = false;
+                    logger.Info("ViGEm is installed.");
                 }
+            }
+            else if (xOutputManager.IsScp)
+            {
+                    logger.Info("ScpToolkit is installed only.");
+                    notificationService.Add("VigemNotInstalled", true);
+            }
+            else
+            {
+                logger.Error("Neither ViGEm nor SCPToolkit is installed.");
+                notificationService.Add("VigemAndScpNotInstalled", true);
             }
             RefreshGameControllers();
 
@@ -258,7 +257,7 @@ namespace XOutput.UI.Windows
             Controllers.Instance.Add(gameController);
 
             ControllerView controllerView = ApplicationContext.Global.Resolve<ControllerView>();
-            controllerView.Initialize(gameController, installed);
+            controllerView.Initialize(new ControllerContext { Controller = gameController });
             controllerView.RemoveClicked += RemoveController;
             Model.Controllers.Add(controllerView);
             notificationService.Add("ControllerConnected", new string[] { gameController.DisplayName }, TimeSpan.FromSeconds(10));

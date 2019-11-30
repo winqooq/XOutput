@@ -2,6 +2,7 @@
 using System.Windows.Media;
 using System.Windows.Threading;
 using XOutput.Devices;
+using XOutput.Devices.XInput;
 using XOutput.Tools;
 using XOutput.UI.Windows;
 
@@ -12,14 +13,17 @@ namespace XOutput.UI.Component
         private const int BackgroundDelayMS = 500;
 
         private readonly NotificationService notificationService;
+        private readonly XOutputManager xOutputManager;
 
         private readonly DispatcherTimer timer = new DispatcherTimer();
         private GameController controller;
 
         [ResolverMethod(Scope.Prototype)]
-        public ControllerViewModel(ControllerModel model, NotificationService notificationService) : base(model)
+        public ControllerViewModel(ControllerModel model, NotificationService notificationService, XOutputManager xOutputManager) : base(model)
         {
             this.notificationService = notificationService;
+            this.xOutputManager = xOutputManager;
+            Model.CanStart = xOutputManager.HasDevice;
 
             Model.ButtonText = "Start";
             Model.Background = Brushes.White;
@@ -27,10 +31,9 @@ namespace XOutput.UI.Component
             timer.Tick += Timer_Tick;
         }
 
-        public void Initialize(GameController controller, bool canStart)
+        public void Initialize(GameController controller)
         {
             this.controller = controller;
-            Model.CanStart = canStart;
             Model.DisplayName = controller.DisplayName;
             controller.XInput.InputChanged += InputDevice_InputChanged;
         }

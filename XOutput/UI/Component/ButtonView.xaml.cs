@@ -1,25 +1,21 @@
 ﻿using System.Windows.Controls;
 using XOutput.Devices;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
-    /// <summary>
-    /// Interaction logic for ButtonView.xaml
-    /// </summary>
-    public partial class ButtonView : UserControl, IUpdatableView, IViewBase<ButtonViewModel, ButtonModel>
+    public partial class ButtonView : ComponentBase<ButtonViewModel, ButtonModel, ButtonContext>, IUpdatableView
     {
-        public ButtonViewModel ViewModel { get; private set; }
-
-        public ButtonView(ButtonViewModel viewModel)
+        [ResolverMethod(Scope.Prototype)]
+        public ButtonView(ButtonViewModel viewModel) : base(viewModel)
         {
-            ViewModel = viewModel;
             DataContext = viewModel;
             InitializeComponent();
         }
 
-        public void CleanUp()
+        public override void Initialize(ButtonContext context)
         {
-            ViewModel.CleanUp();
+            ViewModel.Initialize(context.Source);
         }
 
         public void UpdateValues(IDevice device)

@@ -32,9 +32,11 @@ namespace XOutput.UI.Windows
             var devices = InputDevices.Instance.GetDevices().OfType<DirectDevice>().ToArray();
             foreach (var device in devices)
             {
-                var item = new ComboBoxItem();
-                item.Tag = device;
-                item.Content = new TextBlock(new Run(device.DisplayName));
+                var item = new ComboBoxItem
+                {
+                    Tag = device,
+                    Content = new TextBlock(new Run(device.DisplayName)),
+                };
                 Model.ForceFeedbacks.Add(item);
                 if (!string.IsNullOrEmpty(controller.Mapper.ForceFeedbackDevice) && controller.Mapper.ForceFeedbackDevice == device.UniqueId)
                 {
@@ -102,7 +104,9 @@ namespace XOutput.UI.Windows
         {
             foreach (var buttonInput in controller.XInput.Sources.Where(s => s.Type == InputSourceTypes.Button))
             {
-                Model.XInputButtonViews.Add(new ButtonView(new ButtonViewModel(new ButtonModel(), buttonInput)));
+                var buttonView = ApplicationContext.Global.Resolve<ButtonView>();
+                buttonView.Initialize(new ButtonContext { Source = buttonInput });
+                Model.XInputButtonViews.Add(buttonView);
             }
             Model.XInputDPadViews.Add(new DPadView(new DPadViewModel(new DPadModel(), 0, false)));
             var lx = controller.XInput.Sources.OfType<XOutputSource>().First(s => s.XInputType == XInputTypes.LX);

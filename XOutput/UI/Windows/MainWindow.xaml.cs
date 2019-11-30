@@ -113,7 +113,7 @@ namespace XOutput.UI.Windows
             }
         }
 
-        private async void WindowClosed(object sender, EventArgs e)
+        private void WindowClosed(object sender, EventArgs e)
         {
             logger.Info("The application will exit.");
         }

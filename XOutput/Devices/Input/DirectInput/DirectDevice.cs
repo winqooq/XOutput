@@ -119,7 +119,7 @@ namespace XOutput.Devices.Input.DirectInput
         private bool connected = false;
         private readonly Thread inputRefresher;
         private bool disposed = false;
-        private DeviceInputChangedEventArgs deviceInputChangedEventArgs;
+        private readonly DeviceInputChangedEventArgs deviceInputChangedEventArgs;
 
         /// <summary>
         /// Creates a new DirectDevice instance.

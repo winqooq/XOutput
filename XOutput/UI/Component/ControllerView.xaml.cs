@@ -24,10 +24,10 @@ namespace XOutput.UI.Component
             InitializeComponent();
         }
 
-        public void Initialize(GameController controller, bool canStart)
+        public void Initialize(ControllerContext context)
         {
-            this.controller = controller;
-            ViewModel.Initialize(controller, canStart);
+            controller = context.Controller;
+            ViewModel.Initialize(context.Controller);
         }
 
         public void CleanUp()
