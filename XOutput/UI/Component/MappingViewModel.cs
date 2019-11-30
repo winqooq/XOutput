@@ -1,4 +1,5 @@
-﻿using XOutput.Devices;
+﻿using System;
+using XOutput.Devices;
 using XOutput.Devices.Input;
 using XOutput.Devices.Mapper;
 using XOutput.Devices.XInput;
@@ -9,9 +10,15 @@ namespace XOutput.UI.Component
 {
     public class MappingViewModel : ViewModelBase<MappingModel>
     {
-        private readonly GameController controller;
+        private GameController controller;
 
-        public MappingViewModel(MappingModel model, GameController controller, XInputTypes inputType) : base(model)
+        [ResolverMethod(Scope.Prototype)]
+        public MappingViewModel(MappingModel model) : base(model)
+        {
+
+        }
+
+        public void Initialize(GameController controller, XInputTypes inputType)
         {
             this.controller = controller;
             Model.XInputType = inputType;

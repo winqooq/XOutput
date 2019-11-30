@@ -1,25 +1,23 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using XOutput.Tools;
 
 namespace XOutput.UI.Component
 {
     /// <summary>
     /// Interaction logic for MappingView.xaml
     /// </summary>
-    public partial class MappingView : UserControl, IViewBase<MappingViewModel, MappingModel>
+    public partial class MappingView : ComponentBase<MappingViewModel, MappingModel, MappingContext>
     {
-        public MappingViewModel ViewModel { get; private set; }
-
-        public MappingView(MappingViewModel viewModel)
+        [ResolverMethod(Scope.Prototype)]
+        public MappingView(MappingViewModel viewModel)  : base(viewModel)
         {
-            ViewModel = viewModel;
-            DataContext = viewModel;
             InitializeComponent();
         }
 
-        public void CleanUp()
+        public override void Initialize(MappingContext context)
         {
-            ViewModel.CleanUp();
+            ViewModel.Initialize(context.Controller, context.InputType);
         }
 
         public void Refresh()

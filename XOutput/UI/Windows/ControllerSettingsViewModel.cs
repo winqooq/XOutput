@@ -86,21 +86,27 @@ namespace XOutput.UI.Windows
             foreach (var xInputType in XInputHelper.Instance.Buttons)
             {
                 var view = ApplicationContext.Global.Resolve<MappingBlockView>();
-                view.Initialize(new MappingBlockContext { });
+                view.Initialize(new MappingBlockContext { Controller = controller, InputType = xInputType });
                 Model.MapperButtonViews.Add(view);
 
             }
             foreach (var xInputType in XInputHelper.Instance.DPad)
             {
-                Model.MapperDPadViews.Add(new MappingView(new MappingViewModel(new MappingModel(), controller, xInputType)));
+                var view = ApplicationContext.Global.Resolve<MappingView>();
+                view.Initialize(new MappingContext { Controller = controller, InputType = xInputType });
+                Model.MapperDPadViews.Add(view);
             }
             foreach (var xInputType in XInputHelper.Instance.Axes)
             {
-                Model.MapperAxisViews.Add(new MappingView(new MappingViewModel(new MappingModel(), controller, xInputType)));
+                var view = ApplicationContext.Global.Resolve<MappingView>();
+                view.Initialize(new MappingContext { Controller = controller, InputType = xInputType });
+                Model.MapperAxisViews.Add(view);
             }
             foreach (var xInputType in XInputHelper.Instance.Sliders)
             {
-                Model.MapperAxisViews.Add(new MappingView(new MappingViewModel(new MappingModel(), controller, xInputType)));
+                var view = ApplicationContext.Global.Resolve<MappingView>();
+                view.Initialize(new MappingContext { Controller = controller, InputType = xInputType });
+                Model.MapperAxisViews.Add(view);
             }
         }
 

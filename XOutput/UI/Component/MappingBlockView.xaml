@@ -9,42 +9,50 @@
                      x:TypeArguments="local:MappingBlockViewModel,local:MappingBlockModel,local:MappingBlockContext"
                      d:DataContext="{d:DesignInstance Type=local:MappingBlockViewModel, IsDesignTimeCreatable=False}"
                      d:DesignHeight="150" d:DesignWidth="610">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="90"/>
-            <ColumnDefinition Width="100"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel>
-            <CheckBox Visibility="{Binding Model.IsAxis, Converter={StaticResource BoolToVisibilityConverter}}" IsChecked="{Binding Model.HalfAxisMode}"
-                      Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HalfAxisMode'}"/>
+    <GroupBox>
+        <GroupBox.Header>
+            <MultiBinding Converter="{StaticResource DynamicLanguageConverter}">
+                <Binding Path="LanguageModel.Data" />
+                <Binding Path="Model.InputType" />
+            </MultiBinding>
+        </GroupBox.Header>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="90"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
             <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Inputs'}" />
-                    <Button Grid.Column="2" Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" Height="30" Width="30">
-                        <iconPacks:PackIconFontAwesome Kind="PlusSolid" />
-                    </Button>
+                <CheckBox Visibility="{Binding Model.IsAxis, Converter={StaticResource BoolToVisibilityConverter}}" IsChecked="{Binding Model.HalfAxisMode}"
+                          Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='HalfAxisMode'}"/>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='Inputs'}" />
+                        <Button Grid.Column="2" Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" Height="30" Width="30" Click="AddInput">
+                            <iconPacks:PackIconFontAwesome Kind="PlusSolid" />
+                        </Button>
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding Model.MappingViews}" ItemsPanel="{StaticResource VerticalStackPanel}" Focusable="False"/>
                 </StackPanel>
-                <ItemsControl ItemsSource="{Binding Model.MappingViews}" ItemsPanel="{StaticResource VerticalStackPanel}" Focusable="False"/>
-            </StackPanel>
-            <StackPanel Visibility="{Binding Model.IsAxis, Converter={StaticResource BoolToVisibilityConverter}}">
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='LowerHalf'}" />
-                    <Button Grid.Column="2" Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" Height="30" Width="30">
-                        <iconPacks:PackIconFontAwesome Kind="PlusSolid" />
-                    </Button>
+                <StackPanel Visibility="{Binding Model.IsAxis, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='LowerHalf'}" />
+                        <Button Grid.Column="2" Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" Height="30" Width="30">
+                            <iconPacks:PackIconFontAwesome Kind="PlusSolid" />
+                        </Button>
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding Model.MappingViews}" ItemsPanel="{StaticResource VerticalStackPanel}" Focusable="False"/>
                 </StackPanel>
-                <ItemsControl ItemsSource="{Binding Model.MappingViews}" ItemsPanel="{StaticResource VerticalStackPanel}" Focusable="False"/>
-            </StackPanel>
-            <StackPanel Visibility="{Binding Model.IsAxis, Converter={StaticResource BoolToVisibilityConverter}}">
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='UpperHalf'}" />
-                    <Button Grid.Column="2" Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" Height="30" Width="30">
-                        <iconPacks:PackIconFontAwesome Kind="PlusSolid" />
-                    </Button>
+                <StackPanel Visibility="{Binding Model.IsAxis, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{Binding LanguageModel.Data, Converter={StaticResource LanguageConverter}, ConverterParameter='UpperHalf'}" />
+                        <Button Grid.Column="2" Style="{DynamicResource MahApps.Metro.Styles.MetroCircleButtonStyle}" Height="30" Width="30">
+                            <iconPacks:PackIconFontAwesome Kind="PlusSolid" />
+                        </Button>
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding Model.MappingViews}" ItemsPanel="{StaticResource VerticalStackPanel}" Focusable="False"/>
                 </StackPanel>
-                <ItemsControl ItemsSource="{Binding Model.MappingViews}" ItemsPanel="{StaticResource VerticalStackPanel}" Focusable="False"/>
             </StackPanel>
-        </StackPanel>
-        <ItemsControl Grid.Column="1" ItemsSource="{Binding Model.XInputViews}" ItemsPanel="{StaticResource VerticalStackPanel}" Focusable="False"/>
-    </Grid>
+            <ItemsControl Grid.Column="1" ItemsSource="{Binding Model.XInputViews}" ItemsPanel="{StaticResource VerticalStackPanel}" Focusable="False"/>
+        </Grid>
+    </GroupBox>
 </local:ComponentBase>

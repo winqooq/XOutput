@@ -12,6 +12,28 @@ namespace XOutput.UI.Component
         public ObservableCollection<MappingView> MappingViews { get; private set; }
         public ObservableCollection<IUpdatableView> XInputViews { get; private set; }
 
+        private bool isAxis;
+        public bool IsAxis
+        {
+            get => isAxis;
+            set { Set(value, ref isAxis, nameof(IsAxis)); }
+        }
+
+        private bool halfAxisMode;
+        public bool HalfAxisMode
+        {
+            get => halfAxisMode;
+            set { Set(value, ref halfAxisMode, nameof(HalfAxisMode)); }
+        }
+
+        private XInputTypes inputType;
+        public XInputTypes InputType
+        {
+            get => inputType;
+            set { Set(value, ref inputType, nameof(InputType)); }
+        }
+
+
         [ResolverMethod(Scope.Prototype)]
         public MappingBlockModel()
         {

@@ -15,7 +15,12 @@ namespace XOutput.UI.Component
 
         public override void Initialize(MappingBlockContext context)
         {
+            ViewModel.Initialize(context.Controller, context.InputType);
+        }
 
+        private void AddInput(object sender, RoutedEventArgs e)
+        {
+            ViewModel.AddInput();
         }
     }
 }

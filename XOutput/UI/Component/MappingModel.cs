@@ -2,8 +2,9 @@
 using XOutput.Devices;
 using XOutput.Devices.Mapper;
 using XOutput.Devices.XInput;
+using XOutput.Tools;
 
-namespace XOutput.UI
+namespace XOutput.UI.Component
 {
     public class MappingModel : ModelBase
     {
@@ -107,6 +108,12 @@ namespace XOutput.UI
             OnPropertyChanged(nameof(SelectedInput));
             OnPropertyChanged(nameof(Min));
             OnPropertyChanged(nameof(Max));
+        }
+
+        [ResolverMethod(Scope.Prototype)]
+        public MappingModel()
+        {
+
         }
     }
 }
