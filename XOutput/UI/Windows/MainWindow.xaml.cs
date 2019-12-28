@@ -43,7 +43,6 @@ namespace XOutput.UI.Windows
 
         public override void Initialize(MainWindowContext context)
         {
-
         }
 
         public override void CleanUp()
