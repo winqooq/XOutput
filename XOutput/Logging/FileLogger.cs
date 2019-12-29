@@ -5,18 +5,9 @@ using System.Threading.Tasks;
 
 namespace XOutput.Logging
 {
-    /// <summary>
-    /// Writes logs with the help of <see cref="System.Diagnostics.Trace"/>
-    /// </summary>
-    public class TraceLogger : AbstractLogger
+    public class FileLogger : AbstractLogger
     {
-        static TraceLogger()
-        {
-            System.Diagnostics.Trace.AutoFlush = true;
-            System.Diagnostics.Trace.Listeners.Add(new TextWriterTraceListener(LogFile));
-        }
-
-        public TraceLogger(Type loggerType, int level) : base(loggerType, level)
+        public FileLogger(Type loggerType, int level) : base(loggerType, level)
         {
 
         }
@@ -31,7 +22,7 @@ namespace XOutput.Logging
         /// <returns></returns>
         protected override void Log(LogLevel loglevel, StackFrame stackFrame, string log)
         {
-            System.Diagnostics.Trace.WriteLine(CreatePrefix(DateTime.Now, loglevel, LoggerType, stackFrame) + log);
+            File.AppendAllText(LogFile, CreatePrefix(DateTime.Now, loglevel, LoggerType, stackFrame) + log + Environment.NewLine);
         }
     }
 }

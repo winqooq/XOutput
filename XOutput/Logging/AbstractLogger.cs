@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -10,10 +11,26 @@ namespace XOutput.Logging
     /// </summary>
     public abstract class AbstractLogger : ILogger
     {
+        public const string LogFile = "XOutput.log";
+
         private readonly Type loggerType;
         public Type LoggerType => loggerType;
         private readonly int level;
         public int Level => level;
+
+        static AbstractLogger() {
+            
+            if (File.Exists(LogFile))
+            {
+                try
+                {
+                    File.Delete(LogFile);
+                }
+                catch {
+                    // if the file is in use, append the file
+                }
+            }
+        }
 
         protected AbstractLogger(Type loggerType, int level)
         {
@@ -153,6 +170,21 @@ namespace XOutput.Logging
             {
                 Log(loglevel, stackFrame, log() + Environment.NewLine + ex.ToString());
             }
+        }
+
+        public void Log(string log, LogLevel level)
+        {
+            LogCheck(level, new StackTrace().GetFrame(1), log);
+        }
+
+        public void Log(string log, Exception ex, LogLevel level)
+        {
+            LogCheck(level, new StackTrace().GetFrame(1), log, ex);
+        }
+
+        public void Log(Func<string> log, LogLevel level)
+        {
+            LogCheck(level, new StackTrace().GetFrame(1), log());
         }
 
         /// <summary>
