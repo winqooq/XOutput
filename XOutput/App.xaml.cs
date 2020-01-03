@@ -65,6 +65,7 @@ namespace XOutput
                     {
                         mainWindow.Show();
                     }
+                    globalContext.Resolve<Server.HttpServer>().Start("http://192.168.1.2:8000/");
 #if !DEBUG
                     ApplicationContext.Global.Resolve<Devices.Input.Mouse.MouseHook>().StartHook();              
 #endif
