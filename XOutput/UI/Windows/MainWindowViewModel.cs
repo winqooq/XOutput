@@ -164,15 +164,17 @@ namespace XOutput.UI.Windows
         {
             if (!dispatcher.HasShutdownStarted)
             {
-                dispatcher.Invoke(() =>
-                {
-                    var notificationView = ApplicationContext.Global.Resolve<NotificationView>();
-                    notificationView.SetNotificationData(data);
-                    Model.Notifications.Add(notificationView);
-                    notificationView.CloseRequested += NotificationCloseRequested;
-                    Model.NotificationCount = Model.Notifications.Count;
-                });
+                dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action) (() => NotificationCreate(data)));
             }
+        }
+
+        private void NotificationCreate(NotificationData data)
+        {
+            var notificationView = ApplicationContext.Global.Resolve<NotificationView>();
+            notificationView.SetNotificationData(data);
+            Model.Notifications.Add(notificationView);
+            notificationView.CloseRequested += NotificationCloseRequested;
+            Model.NotificationCount = Model.Notifications.Count;
         }
 
         private void NotificationCloseRequested(NotificationView view)
@@ -317,7 +319,7 @@ namespace XOutput.UI.Windows
                     Thread.Sleep(1000);
                     if (!dispatcher.HasShutdownStarted)
                     {
-                        dispatcher.Invoke(RefreshGameControllers);
+                        dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action) RefreshGameControllers);
                     }
                 },
             });

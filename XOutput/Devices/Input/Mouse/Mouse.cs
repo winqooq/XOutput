@@ -149,16 +149,13 @@ namespace XOutput.Devices.Input.Mouse
         public bool RefreshInput(bool force = false)
         {
             state.ResetChanges();
-            App.Current.Dispatcher.Invoke(() =>
+            foreach (var source in sources)
             {
-                foreach (var source in sources)
+                if (source.Refresh())
                 {
-                    if (source.Refresh())
-                    {
-                        state.MarkChanged(source);
-                    }
+                    state.MarkChanged(source);
                 }
-            });
+            }
             var changes = state.GetChanges(force);
             if (changes.Any())
             {
